@@ -24,7 +24,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
-
+	
 
 public:
 	AAuraPlayerState();

@@ -28,6 +28,7 @@ void AAuraEffectActor::OnOverLap(UPrimitiveComponent* OverlappedComponent, AActo
 		const auto AuraAttributeSet = Cast<UAuraAttributeSet>(ASCInterface->GetAbilitySystemComponent()->GetAttributeSet(UAuraAttributeSet::StaticClass()));
 		auto NonConstSet = const_cast<UAuraAttributeSet*>(AuraAttributeSet);
 		NonConstSet->SetHealth(NonConstSet->GetHealth() + 25.f);
+		NonConstSet->SetMana(NonConstSet->GetMana() - 25.f);
 		this->Destroy();
 	}
 }

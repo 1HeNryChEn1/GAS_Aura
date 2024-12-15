@@ -24,6 +24,7 @@ AAuraCharacter::AAuraCharacter ()
 
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+	SpringArm->bDoCollisionTest = false;
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->TargetArmLength = 750.0f;
 	

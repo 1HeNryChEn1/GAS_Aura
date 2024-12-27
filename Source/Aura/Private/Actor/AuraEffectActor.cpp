@@ -14,12 +14,6 @@ AAuraEffectActor::AAuraEffectActor()
 	SetRootComponent(CreateDefaultSubobject<USceneComponent>("SceneComponent"));
 }
 
-void AAuraEffectActor::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
 void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass) const
 {
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
@@ -32,3 +26,10 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 }
 
+void AAuraEffectActor::OnOverlap(AActor* TargetActor)
+{
+}
+
+void AAuraEffectActor::EndOverlap(AActor* TargetActor)
+{
+}

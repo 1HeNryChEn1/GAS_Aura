@@ -66,16 +66,16 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 	if (InfiniteEffectRemovePolicy == EEffectRemovalPolicy::RemoveOnEndOverLap)
 	{
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-		if (IsValid(TargetASC))
+		if (!IsValid(TargetASC))
 		{
 			return;
 		}
 		TArray<FActiveGameplayEffectHandle> HandlesToRemove;
-		for (auto [HandleKey, HandleValue] : ActiveEffectHandles)
+		for (auto &[HandleKey, HandleValue] : ActiveEffectHandles)
 		{
 			if (TargetASC == HandleValue)
 			{
-				TargetASC->RemoveActiveGameplayEffect(HandleKey);
+				TargetASC->RemoveActiveGameplayEffect(HandleKey, 1);
 				// Store the key first instead of erasing it during the loop, which will break the validation of iterator.
 				HandlesToRemove.Add(HandleKey);
 			}

@@ -60,6 +60,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 
+	UFUNCTION(BlueprintCallable)
+	FVector2D GetRandomPosition();
+
 	virtual void BroadcastInitialValues();
 
 	virtual void BindCallbacksToDependencies();

@@ -19,7 +19,7 @@ class AURA_API AAuraPlayerState : public APlayerState, public IAbilitySystemInte
 
 protected:
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY()

@@ -35,6 +35,13 @@ AAuraCharacter::AAuraCharacter ()
 
 }
 
+int32 AAuraCharacter::GetPlayerLevel()
+{
+	const auto AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	return AuraPlayerState->GetPlayerLevel();
+}
+
 void AAuraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);

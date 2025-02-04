@@ -11,7 +11,7 @@
 class UAuraUserWidget;
 struct FOnAttributeChangeData;
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, Blueprintable)
 struct FUIWidgetRow : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -49,9 +49,12 @@ protected:
 
 public:
 	virtual void BroadcastInitialValues() override;
+
 	virtual void BindCallbacksToDependencies() override;
+
 	UPROPERTY(BlueprintAssignable, category = "GAS|Attributes")
 	FOnHealthChangedSignature OnHealthChanged;
+
 	UPROPERTY(BlueprintAssignable, category = "GAS|Attributes")
 	FOnMaxHealthChangedSignature OnMaxHealthChanged;
 	

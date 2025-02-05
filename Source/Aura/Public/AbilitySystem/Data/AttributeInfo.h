@@ -23,7 +23,6 @@ struct FAuraAttributeInfo
 
 	UPROPERTY(BlueprintReadOnly)
 	float AttributeValue = 0.f;
-	
 };
 
 

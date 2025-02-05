@@ -47,3 +47,14 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidge
 	}
 	return nullptr;
 }
+
+FVector2D UAuraAbilitySystemLibrary::GetRandomPosition()
+{
+	FVector2D ScreenSize;
+	GEngine->GameViewport->GetViewportSize(ScreenSize);
+	FVector2D ScreenCenter = ScreenSize * 0.5f;
+	float OffsetRange = 50.0f;
+	float RandomOffsetX = FMath::RandRange(-OffsetRange, OffsetRange);
+	float RandomOffsetY = FMath::RandRange(-OffsetRange, OffsetRange);
+	return ScreenCenter + FVector2D(RandomOffsetX, RandomOffsetY);
+}

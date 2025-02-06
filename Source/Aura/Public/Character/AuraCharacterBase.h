@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 class UAttributeSet;
 class UAbilitySystemComponent;
@@ -17,12 +18,8 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 {
 	GENERATED_BODY()
 
-public:
-	AAuraCharacterBase();
-
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,9 +43,18 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
-	
 
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
 
 	void InitializeDefaultAttributes() const;
+
+	void AddCharacterAbilities();
+
+public:
+	AAuraCharacterBase();
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+
 };

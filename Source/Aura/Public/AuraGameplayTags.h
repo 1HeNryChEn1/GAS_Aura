@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-/**
- * AuraGameplayTags
- *
- * Singleton containing native Gameplay Tags
- */
 
+
+/*
+ * AuraGameplayTags	Singleton
+ *
+ * Containing native Gameplay Tags
+ */
 struct FAuraGameplayTags
 {
 	static const FAuraGameplayTags& Get(){
@@ -33,6 +34,13 @@ struct FAuraGameplayTags
 	FGameplayTag Attributes_Secondary_ManaRegeneration;
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
+	
+	FGameplayTag Input_Tag_LMB;
+	FGameplayTag Input_Tag_RMB;
+	FGameplayTag Input_Tag_1;
+	FGameplayTag Input_Tag_2;
+	FGameplayTag Input_Tag_3;
+	FGameplayTag Input_Tag_4;
 
 private:
 	static FAuraGameplayTags GameplayTags;

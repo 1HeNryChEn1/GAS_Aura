@@ -24,8 +24,11 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 protected:
 	virtual void BeginPlay() override;
 	
-	UPROPERTY (EditAnywhere, Category = "Combat")
+	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName WeaponTipSockerName;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -49,6 +52,8 @@ protected:
 	void InitializeDefaultAttributes() const;
 
 	void AddCharacterAbilities();
+
+	virtual FVector GetComnatSocketLocation() override;
 
 public:
 	AAuraCharacterBase();

@@ -14,7 +14,6 @@
 AAuraPlayerController::AAuraPlayerController ()
 {
 	bReplicates = true;
-
 	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 	FollowTime = 0.f;
 	ShortPressThreshold = 0.5f;
@@ -33,7 +32,6 @@ void AAuraPlayerController::BeginPlay ()
 	{
 		SubSystem->AddMappingContext(AuraContext, 0);
 	}
-
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 
@@ -42,7 +40,6 @@ void AAuraPlayerController::BeginPlay ()
 	InputModeData.SetHideCursorDuringCapture(false);
 	SetInputMode(InputModeData);
 }
-
 
 void AAuraPlayerController::PlayerTick(float DeltaTime)
 {
@@ -123,15 +120,11 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		}
 		return;
 	}
-
-	if (bTargeting)
+	if (GetASC() )
 	{
-		if (GetASC())
-		{
-			GetASC()->AbilityInputTagReleased(InputTag);
-		}
+		GetASC()->AbilityInputTagReleased(InputTag);
 	}
-	else
+	if ( !bTargeting || !bShiftKeyDown)
 	{
 		if (const APawn* ControllerPawn = GetPawn(); FollowTime <= ShortPressThreshold && ControllerPawn )
 		{
@@ -162,7 +155,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		return;
 	}
 
-	if (bTargeting)
+	if (bTargeting || bShiftKeyDown)
 	{
 		if (GetASC())
 		{
@@ -201,9 +194,15 @@ void AAuraPlayerController::SetupInputComponent ()
 
 	// Base Action
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::ShiftReleased);
 
 	// Ability Action
-	AuraInputComponent->BindAbilityActions(InputConfig, this, &AAuraPlayerController::AbilityInputTagPressed, &AAuraPlayerController::AbilityInputTagReleased, &AAuraPlayerController::AbilityInputTagHeld);
+	AuraInputComponent->BindAbilityActions(InputConfig, this, 
+		&AAuraPlayerController::AbilityInputTagPressed, 
+		&AAuraPlayerController::AbilityInputTagReleased, 
+		&AAuraPlayerController::AbilityInputTagHeld);
+	
 }
 
 void AAuraPlayerController::Move (const FInputActionValue &InputActionValue)

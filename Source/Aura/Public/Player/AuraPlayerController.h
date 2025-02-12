@@ -24,17 +24,20 @@ class AURA_API AAuraPlayerController : public APlayerController
 	GENERATED_BODY()
 
 private:
-	UPROPERTY (EditAnywhere, Category = "Input")
+	UPROPERTY (EditAnywhere, Category = "GAS|Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
 
-	UPROPERTY (EditAnywhere, Category = "Input")
+	UPROPERTY (EditAnywhere, Category = "GAS|Input")
 	TObjectPtr<UInputAction> MoveAction;
-	
+
+	UPROPERTY (EditAnywhere, Category = "GAS|Input")
+	TObjectPtr<UInputAction> ShiftAction;
+
 	IEnemyInterface* LastActor;
 	IEnemyInterface* ThisActor;
 	FHitResult CursorHit;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Input")
 	TObjectPtr<UAuraInputConfig> InputConfig;
 
 	UPROPERTY()
@@ -49,9 +52,15 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius;
 
+	bool bShiftKeyDown = false;
+
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
 	/** End Click to move **/
+
+	void ShiftPressed() {bShiftKeyDown = true;}
+
+	void ShiftReleased() {bShiftKeyDown = false;}
 
 	void Move(const FInputActionValue& InputActionValue);
 

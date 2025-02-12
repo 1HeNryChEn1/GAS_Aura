@@ -9,17 +9,17 @@
 #include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
-#include "UI/WidgetController/AuraWidgetController.h"
 
 
 AAuraCharacter::AAuraCharacter ()
 {
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.f, 400.f, 0.f);
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 7999.f, 0.f);
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
-	GetCharacterMovement()->BrakingDecelerationWalking = 2048.0f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 8000.f;
 	GetCharacterMovement()->GroundFriction = 8.0f;
+	GetCharacterMovement()->MaxAcceleration = 10000.f;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
@@ -28,12 +28,11 @@ AAuraCharacter::AAuraCharacter ()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 750.0f;
+	SpringArm->TargetArmLength = 800.0f;
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(SpringArm);
 	Camera->bUsePawnControlRotation = false;
-
 }
 
 int32 AAuraCharacter::GetPlayerLevel()
@@ -60,7 +59,6 @@ void AAuraCharacter::OnRep_PlayerState()
 	// Init AbilityActorInfo for the Client
 	InitAbilityActorInfo();
 }
-
 
 void AAuraCharacter::InitAbilityActorInfo()
 {

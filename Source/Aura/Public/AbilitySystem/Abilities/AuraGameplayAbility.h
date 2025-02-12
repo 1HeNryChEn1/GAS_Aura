@@ -15,6 +15,6 @@ class AURA_API UAuraGameplayAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|Input")
 	FGameplayTag StartupInputTag;
 };

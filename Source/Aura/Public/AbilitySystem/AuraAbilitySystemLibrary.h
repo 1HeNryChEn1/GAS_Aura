@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/CharacterClassInfo.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "UI/HUD/AuraHUD.h"
 #include "AuraAbilitySystemLibrary.generated.h"
@@ -23,5 +24,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static FVector2D GetRandomPosition();
+
+	UFUNCTION(BlueprintCallable)
+	static void InitializeDefaultAttributes(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass, float Level);
 };
 

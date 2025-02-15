@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Character/AuraCharacterBase.h"
+#include "Components/WidgetComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
-
 /**
  * 
  */
@@ -19,18 +21,33 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 PlayerLevel = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	ECharacterClass CharacterClass;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnHealthChanged;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangedSignature OnMaxHealthChanged;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWidgetComponent> HealthBar;
+
 	virtual void BeginPlay() override;
+
 	virtual void InitAbilityActorInfo() override;
 
+	virtual void InitializeDefaultAttributes() const override;
 public:
 	AAuraEnemy();
+
 	//~ Begin Enemy Interface 
 	virtual void HighlightActor() override;
+
 	virtual void UnHighlightActor() override;
 	//~ End Enemy Interface 
 	
 	//~ Begin Combat Interface
 	virtual int32 GetPlayerLevel() override;
-
 	//~ End Combat Interface 
 };

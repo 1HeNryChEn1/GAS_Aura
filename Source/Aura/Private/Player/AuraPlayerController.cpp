@@ -8,6 +8,8 @@
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "Components/SplineComponent.h"
+#include "Engine/LocalPlayer.h"
+#include "GameFramework/Pawn.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 

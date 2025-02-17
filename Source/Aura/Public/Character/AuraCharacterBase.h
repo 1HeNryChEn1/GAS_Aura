@@ -28,7 +28,7 @@ protected:
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
-	FName WeaponTipSockerName;
+	FName WeaponTipSocketName;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -53,7 +53,7 @@ protected:
 
 	virtual void InitializeDefaultAttributes() const;
 
-	void AddCharacterAbilities();
+	void AddCharacterAbilities() const;
 
 	virtual FVector GetComnatSocketLocation() override;
 
@@ -65,4 +65,9 @@ public:
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+
+	virtual void Die() override;
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
 };

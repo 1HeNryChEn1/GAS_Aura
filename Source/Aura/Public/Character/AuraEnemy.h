@@ -39,6 +39,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	float BaseWalkSpeed = 250.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float LifeSpan = 5.f;
+
 	virtual void BeginPlay() override;
 
 	virtual void InitAbilityActorInfo() override;
@@ -58,4 +61,6 @@ public:
 	//~ End Combat Interface 
 
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+	virtual void Die() override;
 };

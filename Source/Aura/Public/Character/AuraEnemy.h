@@ -33,6 +33,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	bool bHitReacting;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 250.f;
+
 	virtual void BeginPlay() override;
 
 	virtual void InitAbilityActorInfo() override;
@@ -50,4 +56,6 @@ public:
 	//~ Begin Combat Interface
 	virtual int32 GetPlayerLevel() override;
 	//~ End Combat Interface 
+
+	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 };

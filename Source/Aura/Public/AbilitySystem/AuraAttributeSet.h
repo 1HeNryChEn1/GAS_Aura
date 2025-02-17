@@ -80,6 +80,11 @@ public:
 
 	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
 
+	// Meta Attributes
+		UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+		FGameplayAttributeData IncomingDamage;
+		ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
+
 	//Vital Attributes
 		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")FGameplayAttributeData Health;ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Health);UFUNCTION()void OnRep_Health(const FGameplayAttributeData& OldHealth) const{GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, Health, OldHealth);};
 		UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana, Category = "Vital Attributes") FGameplayAttributeData Mana; ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Mana); UFUNCTION() void OnRep_Mana(const FGameplayAttributeData& OldMana) const{ GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, Mana, OldMana); };

@@ -7,6 +7,8 @@
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "UI/Widgets/DamageTextComponent.h"
+#include "GameFramework/Character.h"
 #include "AuraPlayerController.generated.h"
 
 class USplineComponent;
@@ -16,7 +18,6 @@ class IEnemyInterface;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
-
 
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
@@ -49,14 +50,17 @@ private:
 	float ShortPressThreshold;
 	bool bAutoRunning;
 	bool bTargeting;
+	bool bShiftKeyDown = false;
+
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius;
-
-	bool bShiftKeyDown = false;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
 	/** End Click to move **/
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
 	void ShiftPressed() {bShiftKeyDown = true;}
 
@@ -85,5 +89,7 @@ public:
 
 	virtual void PlayerTick(float DeltaTime) override;
 
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
 };
 

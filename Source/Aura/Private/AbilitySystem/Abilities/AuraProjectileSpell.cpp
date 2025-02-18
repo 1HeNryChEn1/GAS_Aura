@@ -49,7 +49,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
 			Projectile->DamageEffectSpecHandle, 
 			FAuraGameplayTags::Get().Damage, 
-			Damage.GetValueAtLevel(GetAbilityLevel()));
+			Damage.GetValueAtLevel(GetAbilityLevel() + 20));
 
 		Projectile->FinishSpawning(SpawnTransform);
 	}

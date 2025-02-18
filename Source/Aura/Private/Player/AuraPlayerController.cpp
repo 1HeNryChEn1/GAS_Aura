@@ -52,6 +52,20 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	AutoRunning();
 }
 
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+{
+	// TODO:
+	//	bugfix: DamageText only shows up on server side, which pretty strange. 
+	if (IsValid(TargetCharacter) && DamageTextComponentClass)
+	{
+		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount);
+	}
+}
+
 void AAuraPlayerController::AutoRunning()
 {
 	if (!bAutoRunning)

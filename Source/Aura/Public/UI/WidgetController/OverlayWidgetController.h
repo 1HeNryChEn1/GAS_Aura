@@ -8,6 +8,7 @@
 #include "OverlayWidgetController.generated.h"
 
 
+class UDataTable;
 class UAuraUserWidget;
 struct FOnAttributeChangeData;
 

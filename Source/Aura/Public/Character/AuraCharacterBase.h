@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UMaterialInstanceDynamic;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAttributeSet;
@@ -45,6 +46,20 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMaterialInterface> DissolveMaterialInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UMaterialInterface> WeaponDissolveMaterialInstance;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); // The reason why using Blueprint implement function is that blueprint size has Timeline, which easily for dev.
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance);
+
+	void Dissolve();
+
 	virtual void InitAbilityActorInfo();
 
 	virtual void BeginPlay() override;
@@ -56,7 +71,7 @@ protected:
 	void AddCharacterAbilities() const;
 
 	virtual FVector GetComnatSocketLocation() override;
-
+	
 public:
 	AAuraCharacterBase();
 

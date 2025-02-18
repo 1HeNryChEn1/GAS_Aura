@@ -9,7 +9,9 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerController.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/AuraPlayerController.h"
 
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -80,8 +82,7 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 		}
 		if (Props.SourceController)
 		{
-			ACharacter* SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
-
+			Props.SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
 		}
 	}
 
@@ -136,7 +137,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			// Activate HitReact Ability
 			if(!bFatal)
 			{
-				const FGameplayTagContainer TagContainer(FAuraGameplayTags::Get().Effects_HitReact);
+				const FGameplayTagContainer TagContainer = FGameplayTagContainer{ FAuraGameplayTags::Get().Effects_HitReact };
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 			else
@@ -146,6 +147,18 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 					CombatInterface->Die();
 				}
 			}
+			ShowFloatingText(Props, LocalIncomingDamage);
+		}
+	}
+}
+
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, const float Damage)  
+{
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+		if (auto PlayerController = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		{
+			PlayerController->ShowDamageNumber(Damage, Props.TargetCharacter);
 		}
 	}
 }

@@ -24,9 +24,9 @@
 		GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, Attribute, Old##Attribute); \
 	};
 
+class ACharacter;
 template<typename T>
 using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
-
 
 USTRUCT()
 struct FEffectProperties
@@ -69,6 +69,7 @@ class AURA_API UAuraAttributeSet : public UAttributeSet
 
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const ;
 
+	void ShowFloatingText(const FEffectProperties& Props, float Damage);
 public:
 	UAuraAttributeSet();
 

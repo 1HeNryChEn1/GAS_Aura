@@ -72,7 +72,6 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 		return;
 	}
 	auto AvatarActor = ASC->GetAvatarActor();
-
 	const auto CharacterClassInfo = AuraGameMode->CharacterClassInfo;
 
 	const auto ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
@@ -106,4 +105,14 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
 		ASC->GiveAbility(AbilitySpec);
 	}
+}
+
+UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
+{
+	auto AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (!AuraGameMode)
+	{
+		return nullptr;
+	}
+	return AuraGameMode->CharacterClassInfo;
 }

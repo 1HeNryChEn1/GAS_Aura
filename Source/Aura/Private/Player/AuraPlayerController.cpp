@@ -52,7 +52,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	AutoRunning();
 }
 
-void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit)
 {
 	// TODO:
 	//	bugfix: DamageText only shows up on server side, which pretty strange. 
@@ -62,7 +62,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
 	}
 }
 
@@ -140,7 +140,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	{
 		GetASC()->AbilityInputTagReleased(InputTag);
 	}
-	if ( !bTargeting || !bShiftKeyDown)
+	if ( !bTargeting && !bShiftKeyDown)
 	{
 		if (const APawn* ControllerPawn = GetPawn(); FollowTime <= ShortPressThreshold && ControllerPawn )
 		{

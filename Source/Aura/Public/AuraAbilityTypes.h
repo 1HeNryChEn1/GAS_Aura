@@ -23,7 +23,7 @@ public:
 
 	bool IsBlockedHit() const
 	{
-		return bIsCriticalHit;
+		return bIsBlockedHit;
 	}
 
 	void SetIsCriticalHit(const bool bInIsCriticalHit){bIsCriticalHit = bInIsCriticalHit;}

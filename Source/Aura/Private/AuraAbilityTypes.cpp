@@ -24,7 +24,7 @@ FAuraGameplayEffectContext* FAuraGameplayEffectContext::Duplicate() const
 
 bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess)
 {
-	uint16 RepBits = 0;
+	uint32 RepBits = 0;
 	if (Ar.IsSaving())
 	{
 		if (bReplicateInstigator && Instigator.IsValid())
@@ -65,7 +65,9 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		}
 	}
 
+	UE_LOG(LogTemp, Log, TEXT("NetSerialize Saving: RepBits=%d"), RepBits);
 	Ar.SerializeBits(&RepBits, 9);
+	UE_LOG(LogTemp, Log, TEXT("NetSerialize Loaded: RepBits=%d"), RepBits);
 
 	if (RepBits & (1 << 0))
 	{

@@ -16,7 +16,7 @@ class AURA_API UAuraAbilitySystemComponent : public UAbilitySystemComponent
 
 protected:
 	UFUNCTION(Client, Reliable)
-	void ClientEffectApplied(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle) const;
+	void ClientEffectApplied(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle);
 
 public:
 	void AbilityActorInfoSet();

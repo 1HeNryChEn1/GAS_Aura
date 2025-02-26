@@ -56,7 +56,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
 {
 	// TODO:
 	//	bugfix: DamageText only shows up on server side, which pretty strange. 
-	if (IsValid(TargetCharacter) && DamageTextComponentClass)
+	if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
 	{
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
 		DamageText->RegisterComponent();
@@ -151,7 +151,10 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				{
 					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
 				}
-				CachedDestination = NavPath->PathPoints.Last();
+				if (!NavPath->PathPoints.IsEmpty())
+				{
+					CachedDestination = NavPath->PathPoints.Last();
+				}
 				bAutoRunning = true;
 			}
 		}

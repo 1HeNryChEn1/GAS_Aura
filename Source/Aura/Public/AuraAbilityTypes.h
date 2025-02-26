@@ -30,8 +30,10 @@ public:
 
 	void SetIsBlockedHit(const bool bInIsBlockedHit){bIsBlockedHit = bInIsBlockedHit;}
 
+	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const override;
 
+	/** Creates a copy of this context, used to duplicate for later modifications */
 	virtual FAuraGameplayEffectContext* Duplicate() const override;
 
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;

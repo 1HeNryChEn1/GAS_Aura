@@ -7,7 +7,7 @@
 
 UScriptStruct* FAuraGameplayEffectContext::GetScriptStruct() const
 {
-	return GetScriptStruct();
+	return StaticStruct();
 }
 
 FAuraGameplayEffectContext* FAuraGameplayEffectContext::Duplicate() const
@@ -65,9 +65,7 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		}
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("NetSerialize Saving: RepBits=%d"), RepBits);
 	Ar.SerializeBits(&RepBits, 9);
-	UE_LOG(LogTemp, Log, TEXT("NetSerialize Loaded: RepBits=%d"), RepBits);
 
 	if (RepBits & (1 << 0))
 	{

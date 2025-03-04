@@ -70,7 +70,7 @@ protected:
 
 	void AddCharacterAbilities() const;
 
-	virtual FVector GetComnatSocketLocation() override;
+	virtual FVector GetCombatSocketLocation() override;
 	
 public:
 	AAuraCharacterBase();

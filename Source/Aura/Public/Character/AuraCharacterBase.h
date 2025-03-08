@@ -24,12 +24,19 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName WeaponTipSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName LeftHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName RightHandSocketName;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -52,8 +59,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UMaterialInterface> WeaponDissolveMaterialInstance;
 
+	bool bDead = false;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TArray<FTaggedMontage> AttackMontages;
+
+	// The reason why using Blueprint implement function is that blueprint size has Timeline, which easily for dev.
 	UFUNCTION(BlueprintImplementableEvent)
-	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); // The reason why using Blueprint implement function is that blueprint size has Timeline, which easily for dev.
+	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance);
@@ -70,8 +83,6 @@ protected:
 
 	void AddCharacterAbilities() const;
 
-	virtual FVector GetCombatSocketLocation_Implementation() override;
-	
 public:
 	AAuraCharacterBase();
 
@@ -79,10 +90,21 @@ public:
 
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
+	/* Combat Interface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 
 	virtual void Die() override;
 
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
+
+	virtual bool IsDead_Implementation() const override;
+
+	virtual AActor* GetAvatar_Implementation() override;
+
+	virtual TArray<FTaggedMontage> GetAttackMontage_Implementation() override;
+	/* End Combat Interface */
+
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
+
 };

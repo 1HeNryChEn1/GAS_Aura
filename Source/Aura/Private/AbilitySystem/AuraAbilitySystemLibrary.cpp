@@ -7,6 +7,7 @@
 #include "AuraAbilityTypes.h"
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
+#include "Engine/OverlapResult.h"
 #include "Game/AuraGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerState.h"
@@ -161,4 +162,33 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& E
 	{
 		 AuraEffectContext->SetIsCriticalHit(bIsCriticalHit);
 	}
+}
+
+void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject,
+	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius,
+	const FVector& SphereOrigin)
+{
+	FCollisionQueryParams SphereParameters;
+	SphereParameters.AddIgnoredActors(ActorsToIgnore);
+
+	TArray<FOverlapResult> OverlapResults;
+	if (auto World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
+	{
+		World->OverlapMultiByObjectType(
+			OverlapResults,
+			SphereOrigin,
+			FQuat::Identity,
+			FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects),
+			FCollisionShape::MakeSphere(Radius),
+			SphereParameters
+		);
+		for (auto &OverlapResult : OverlapResults)
+		{
+			if (OverlapResult.GetActor()->Implements<UCombatInterface>() && ! ICombatInterface::Execute_IsDead(OverlapResult.GetActor()) )
+			{
+				OutOverlappingActors.AddUnique(OverlapResult.GetActor());
+			}
+		}
+	}
+	
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "NiagaraSystem.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
@@ -64,6 +65,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	UNiagaraSystem* BloodEffect;
+
 	// The reason why using Blueprint implement function is that blueprint size has Timeline, which easily for dev.
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
@@ -102,6 +106,8 @@ public:
 	virtual AActor* GetAvatar_Implementation() override;
 
 	virtual TArray<FTaggedMontage> GetAttackMontage_Implementation() override;
+
+	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	/* End Combat Interface */
 
 	UFUNCTION(NetMulticast, Reliable)

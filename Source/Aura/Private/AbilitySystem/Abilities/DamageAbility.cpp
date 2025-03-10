@@ -16,3 +16,13 @@ void UDamageAbility::CauseDamage(AActor* Target)
 	}
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(),UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target));
 }
+
+FTaggedMontage UDamageAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages)
+{
+	if (TaggedMontages.IsEmpty())
+	{
+		return {};
+	}
+	const auto Selection = FMath::RandRange(0, TaggedMontages.Num() - 1);
+	return TaggedMontages[Selection];
+}

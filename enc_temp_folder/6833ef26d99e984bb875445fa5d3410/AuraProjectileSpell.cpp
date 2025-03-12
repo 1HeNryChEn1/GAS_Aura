@@ -59,5 +59,6 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			Tag, 
 			Value.GetValueAtLevel(GetAbilityLevel()));
 	}
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, FString::Printf(TEXT("Spawn Projectile")));	
 	Projectile->FinishSpawning(SpawnTransform);
 }

@@ -45,6 +45,7 @@ void AAuraCharacterBase::Die()
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
+	check(DeathSound);
 	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);

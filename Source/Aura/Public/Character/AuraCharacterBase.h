@@ -68,6 +68,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	UNiagaraSystem* BloodEffect;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	USoundBase* DeathSound;
+
 	// The reason why using Blueprint implement function is that blueprint size has Timeline, which easily for dev.
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
@@ -108,6 +111,8 @@ public:
 	virtual TArray<FTaggedMontage> GetAttackMontage_Implementation() override;
 
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
+
+	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
 	/* End Combat Interface */
 
 	UFUNCTION(NetMulticast, Reliable)

@@ -79,14 +79,23 @@ protected:
 	int32 MinionCount = 0;
 
 
-	// The reason why using Blueprint implement function is that blueprint size has Timeline, which easily for dev.
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartSpawningTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponSpawningTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance);
-
+	
+	UFUNCTION(BlueprintCallable)
 	void Dissolve();
+
+	UFUNCTION(BlueprintCallable)
+	void Spawning();
 
 	virtual void InitAbilityActorInfo();
 

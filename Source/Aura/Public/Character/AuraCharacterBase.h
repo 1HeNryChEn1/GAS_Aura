@@ -75,6 +75,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	USoundBase* DeathSound;
 
+	// Minions
+	int32 MinionCount = 0;
+
+
 	// The reason why using Blueprint implement function is that blueprint size has Timeline, which easily for dev.
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
@@ -117,6 +121,10 @@ public:
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
+
+	virtual int32 GetMinionsCount_Implementation() override;
+
+	virtual void IncremenetMinionCount_Implementation(int32 Amount) override;
 	/* End Combat Interface */
 
 	UFUNCTION(NetMulticast, Reliable)

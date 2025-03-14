@@ -3,6 +3,11 @@
 
 #include "AbilitySystem/Abilities/SummonAbility.h"
 
+TSubclassOf<APawn> USummonAbility::GetRandomMinionClass()
+{
+	return MinionClasses[FMath::RandRange(0, MinionClasses.Num() - 1)];
+}
+
 TArray<FVector> USummonAbility::GetSpawnLocation()
 {
 	const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();

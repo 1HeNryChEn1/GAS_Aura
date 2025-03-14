@@ -16,7 +16,7 @@ class AURA_API AAuraProjectile : public AActor
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "tree"))
 	TObjectPtr<USphereComponent> Sphere;
 
 	UPROPERTY(EditAnywhere)

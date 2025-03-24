@@ -9,7 +9,6 @@ void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 {
 	Super::OnRep_ActivateAbilities();
 
-	// Client
 	if (!bStartupAbilitiesGiven)
 	{
 		bStartupAbilitiesGiven = true;

@@ -40,5 +40,4 @@ public:
 
 	FAuraAttributeInfo FindAttributeInfoByTag(const FGameplayTag& AttributeTag, bool bLogNotFound = false) const;
 
-
 };

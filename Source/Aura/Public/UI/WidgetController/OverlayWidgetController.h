@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "Engine/DataTable.h"
 #include "Engine/Texture2D.h"
 #include "UI/WidgetController/AuraWidgetController.h"
@@ -44,8 +46,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
+
 	template<typename T>
 	T* GetDateTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
+
+	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC);
 
 public:
 	virtual void BroadcastInitialValues() override;
@@ -66,6 +73,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, category = "GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRow;
+
+	UPROPERTY (BlueprintAssignable, category = "GAS|Abilities")
+	FAbilityInfoSignature AbilityInfoDelegate;
 };
 
 template <typename T>

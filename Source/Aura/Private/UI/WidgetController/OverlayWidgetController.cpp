@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "Player/AuraPlayerState.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
@@ -17,8 +18,13 @@ void UOverlayWidgetController::BroadcastInitialValues()
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
-	const UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(AttributeSet);
+	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPlayerState->OnXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+	AuraPlayerState->OnLevelChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnPlayerLevelChanged);
+	AuraPlayerState->OnAttributePointsChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnAttributePointsChanged);
+	AuraPlayerState->OnSpellPointsChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnSpellPointsChanged);
 
+	const UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(AttributeSet);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
     AuraAttributeSet->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
 	{
@@ -42,6 +48,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	{
 	    OnMaxManaChanged.Broadcast(Data.NewValue);
 	});
+
 	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
 	{
 		if (AuraASC->bStartupAbilitiesGiven)  // When callback binding is slower than the initialization of Abilities.
@@ -72,6 +79,40 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			}
 		);
 	}
+}
+
+void UOverlayWidgetController::OnXPChanged(int32 NewXP) const
+{
+	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	TObjectPtr<ULevelUpInfo> LevelUpInfo = AuraPlayerState->LevelUpInfo;
+	check(LevelUpInfo);
+
+	const int32 CurrentLevel = LevelUpInfo->FindLevelByXP(NewXP);
+	const int32 MaxLevel = LevelUpInfo->LevelUpInfos.Num() - 1;
+	if (0 < CurrentLevel && CurrentLevel <= MaxLevel)
+	{
+		const int32 LevelUpRequirement = LevelUpInfo->LevelUpInfos[CurrentLevel].LevelUpRequirement;
+		const int32 PreviousLevelUpRequirement = LevelUpInfo->LevelUpInfos[CurrentLevel - 1].LevelUpRequirement;
+		const int32 DeltaLevelRequirement = LevelUpRequirement - PreviousLevelUpRequirement;
+		const int32 XPForThisLevel = NewXP - PreviousLevelUpRequirement;
+		const float NewXPPercent = static_cast<float>(XPForThisLevel) / static_cast<float>(DeltaLevelRequirement);
+		OnXPPercentChangedDelegate.Broadcast(NewXPPercent);
+	}	
+}
+
+void UOverlayWidgetController::OnPlayerLevelChanged(int32 NewPlayerLevel) const
+{
+	OnPlayerLevelChangedDelegate.Broadcast(NewPlayerLevel);
+}
+
+void UOverlayWidgetController::OnAttributePointsChanged(int32 NewAttributePoints) const
+{
+	OnAttributePointsChangedDelegate.Broadcast(NewAttributePoints);
+}
+
+void UOverlayWidgetController::OnSpellPointsChanged(int32 NewSpellPoints) const
+{
+	OnSpellPointsChangedDelegate.Broadcast(NewSpellPoints);
 }
 
 void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC)

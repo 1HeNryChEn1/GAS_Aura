@@ -87,8 +87,17 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	FAggregatorEvaluateParameters EvaluateParameters;
 	EvaluateParameters.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	EvaluateParameters.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
-	auto SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
-	auto TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
+
+	int32 SourcePlayerLevel = 1;
+	if (SourceAvatar->Implements<UCombatInterface>())
+	{
+		SourcePlayerLevel = ICombatInterface::Execute_GetPlayerLevel(SourceAvatar);
+	}
+	int32 TargetPlayerLevel = 1;
+	if (TargetAvatar->Implements<UCombatInterface>())
+	{
+		TargetPlayerLevel = ICombatInterface::Execute_GetPlayerLevel(TargetAvatar);
+	}
 
 	// Get Damage Set by Caller Magnitude
 	float Damage = 0;
@@ -142,14 +151,14 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const auto CharacterClassInfo = UAuraAbilitySystemLibrary::GetCharacterClassInfo(SourceAvatar);
 
 	const auto ArmorPenetrationCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("ArmorPenetrationC"), FString());
-	const float ArmorPenetrationC = ArmorPenetrationCurve->Eval(SourceCombatInterface->GetPlayerLevel());
+	const float ArmorPenetrationC = ArmorPenetrationCurve->Eval(SourcePlayerLevel);
 	const float EffectiveArmor = TargetArmor * (100 - SourceArmorPenetration * ArmorPenetrationC) / 100.f;
 
 	auto EffectiveArmorCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("EffectiveArmorC"), FString());
-	const float EffectiveArmorC = EffectiveArmorCurve->Eval(TargetCombatInterface->GetPlayerLevel());
+	const float EffectiveArmorC = EffectiveArmorCurve->Eval(TargetPlayerLevel);
 
 	auto CriticalHitResistanceCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("CriticalHitResistanceC"), FString());
-	const float CriticalHitResistanceC = CriticalHitResistanceCurve->Eval(TargetCombatInterface->GetPlayerLevel());
+	const float CriticalHitResistanceC = CriticalHitResistanceCurve->Eval(TargetPlayerLevel);
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance - TargetCriticalHitResistance * CriticalHitResistanceC;
 	bool bIsCriticalHit = EffectiveCriticalHitChance > FMath::RandRange(0, 99);
 	UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bIsCriticalHit);

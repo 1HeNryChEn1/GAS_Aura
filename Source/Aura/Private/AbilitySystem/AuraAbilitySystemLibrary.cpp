@@ -9,6 +9,7 @@
 #include "Engine/GameViewportClient.h"
 #include "Engine/OverlapResult.h"
 #include "Game/AuraGameModeBase.h"
+#include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
@@ -66,7 +67,16 @@ FVector2D UAuraAbilitySystemLibrary::GetRandomPosition()
 	return ScreenCenter + FVector2D(RandomOffsetX, RandomOffsetY);
 }
 
-void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass, float Level)
+FLinearColor UAuraAbilitySystemLibrary::GetLevelColorByLevel(int32 InLevel)
+{
+	const int32 ClampedLevel = FMath::Clamp(InLevel, 1, 10);
+    const float T = (ClampedLevel - 1) / 9.0f;
+    const float G = FMath::Lerp(1.0f, 0.25f, T);
+    const float B = FMath::Lerp(1.0f, 0.0f, T);
+    return FLinearColor(1.0f, G, B, 1.0f);
+}
+
+void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass, int32 Level)
 {
 	auto AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if (!AuraGameMode)
@@ -110,12 +120,24 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 	auto DefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
 	for (auto AbilityClass : DefaultInfo.StartupAbilities)
 	{
-		if (auto CombatInterface = Cast<ICombatInterface>(ASC->GetAvatarActor()))
+		if (ASC->GetAvatarActor()->Implements<UCombatInterface>())
 		{
-			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, CombatInterface->GetPlayerLevel());
+			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, ICombatInterface::Execute_GetPlayerLevel(ASC->GetAvatarActor()));
 			ASC->GiveAbility(AbilitySpec);
 		}
 	}
+}
+
+int32 UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)
+{
+	auto AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if(!AuraGameMode)
+	{
+		return 0;
+	}
+	const TObjectPtr<UCharacterClassInfo> CharacterClassInfo = AuraGameMode->CharacterClassInfo;
+	const FCharacterClassDefaultInfo Info = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	return static_cast<int32>(Info.XPReward.GetValueAtLevel(Level));
 }
 
 UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)

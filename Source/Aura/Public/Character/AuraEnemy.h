@@ -23,9 +23,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 PlayerLevel = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
-	ECharacterClass CharacterClass;
-
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;
 
@@ -68,7 +65,7 @@ public:
 	//~ End Enemy Interface 
 	
 	//~ Begin Combat Interface
-	virtual int32 GetPlayerLevel() override;
+	virtual int32 GetPlayerLevel_Implementation() override;
 
 	virtual void Die() override;
 

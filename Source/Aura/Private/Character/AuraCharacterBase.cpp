@@ -85,6 +85,7 @@ void AAuraCharacterBase::AddCharacterAbilities() const
 	}
 	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	AuraASC->AddCharacterAbilities(StartupAbilities);
+	AuraASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 }
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
@@ -149,6 +150,11 @@ int32 AAuraCharacterBase::GetMinionsCount_Implementation()
 void AAuraCharacterBase::IncremenetMinionCount_Implementation(int32 Amount)
 {
 	MinionCount += Amount;
+}
+
+ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation()
+{
+	return CharacterClass;
 }
 
 void AAuraCharacterBase::Dissolve()

@@ -34,6 +34,7 @@ struct FUIWidgetRow : public FTableRowBase
 	UTexture2D* Image = nullptr;
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
@@ -53,6 +54,14 @@ protected:
 	T* GetDateTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 
 	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC);
+
+	void OnXPChanged(int32 NewXP) const;
+
+	void OnPlayerLevelChanged(int32 NewPlayerLevel) const;
+
+	void OnAttributePointsChanged(int32 NewAttributePoints) const;
+
+	void OnSpellPointsChanged(int32 NewSpellPoints) const;
 
 public:
 	virtual void BroadcastInitialValues() override;
@@ -74,8 +83,20 @@ public:
 	UPROPERTY(BlueprintAssignable, category = "GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRow;
 
-	UPROPERTY (BlueprintAssignable, category = "GAS|Abilities")
+	UPROPERTY(BlueprintAssignable, category = "GAS|Abilities")
 	FAbilityInfoSignature AbilityInfoDelegate;
+
+	UPROPERTY(BlueprintAssignable, category = "GAS|XP")
+	FOnPlayerStatChangedSignature OnXPPercentChangedDelegate;
+
+	UPROPERTY (BlueprintAssignable, category = "GAS|PlayerLevel")
+	FOnPlayerStatChangedSignature OnPlayerLevelChangedDelegate;
+
+	UPROPERTY (BlueprintAssignable, category = "GAS|AttributePoints")
+	FOnPlayerStatChangedSignature OnAttributePointsChangedDelegate;
+
+	UPROPERTY (BlueprintAssignable, category = "GAS|SpellPoints")
+	FOnPlayerStatChangedSignature OnSpellPointsChangedDelegate;
 };
 
 template <typename T>

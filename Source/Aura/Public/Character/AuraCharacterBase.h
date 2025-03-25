@@ -22,9 +22,13 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
-	
 
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	ECharacterClass CharacterClass;
+
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
 
@@ -134,6 +138,8 @@ public:
 	virtual int32 GetMinionsCount_Implementation() override;
 
 	virtual void IncremenetMinionCount_Implementation(int32 Amount) override;
+
+	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	/* End Combat Interface */
 
 	UFUNCTION(NetMulticast, Reliable)

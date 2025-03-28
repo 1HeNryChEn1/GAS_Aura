@@ -27,10 +27,10 @@ class AURA_API AAuraPlayerState : public APlayerState, public IAbilitySystemInte
 	int32 XP = 0;
 
 	UPROPERTY(VisibleAnywhere, Replicated = OnRep_SpellPoints)
-	int32 SpellPoints;
+	int32 SpellPoints = 1;
 
 	UPROPERTY (VisibleAnywhere, Replicated = OnRep_AttributePoints)
-	int32 AttributePoints;
+	int32 AttributePoints = 0;
 
 	UFUNCTION()
 	void OnRep_PlayerLevel(int32 OldPlayerLevel);
@@ -51,7 +51,6 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
-	
 
 public:
 	FOnPlayerStatChanged OnXPChangedDelegate;
@@ -76,7 +75,11 @@ public:
 	FORCEINLINE int32 GetPlayerLevel() const {return PlayerLevel;}
 
 	FORCEINLINE int32 GetXP() const {return XP;}
-	
+
+	FORCEINLINE int32 GetSpellPoints () const {return SpellPoints;}
+
+	FORCEINLINE int32 GetAttributePoints () const {return AttributePoints;}
+
 	void AddToXP(int32 InXP);
 
 	void AddToLevel(int32 InLevel);
@@ -89,4 +92,8 @@ public:
 
 	void SetLevel(int32 InLevel);
 
+	void SetAttributePoints(int32 InAttributePoints);
+
+	void SetSpellPoints(int32 InSpellPoints);
 };
+

@@ -23,7 +23,12 @@ class AURA_API AAuraCharacter : public AAuraCharacterBase, public IPlayerInterfa
 
 	virtual void InitAbilityActorInfo() override;
 
+	UFUNCTION (NetMulticast, Reliable)
+	void MulticastLevelUpParticles();
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
+	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;  
+
 	AAuraCharacter();
 
 	// Begin Combat Interface 

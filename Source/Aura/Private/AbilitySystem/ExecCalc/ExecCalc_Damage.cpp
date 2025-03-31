@@ -117,6 +117,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 		Damage += ThisTypeDamage;
 	}
+
 	// Block Chance
 	float TargetBlockChance = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluateParameters, TargetBlockChance);
@@ -125,6 +126,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const bool bBlocked = TargetBlockChance >= FMath::RandRange(0, 99);
 	auto EffectContextHandle = Spec.GetContext();
 	UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
+
 	// if Block, get half the Damage
 	Damage = bBlocked ? Damage * 0.5f : Damage;
 
@@ -160,8 +162,10 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	auto CriticalHitResistanceCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("CriticalHitResistanceC"), FString());
 	const float CriticalHitResistanceC = CriticalHitResistanceCurve->Eval(TargetPlayerLevel);
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance - TargetCriticalHitResistance * CriticalHitResistanceC;
+
 	bool bIsCriticalHit = EffectiveCriticalHitChance > FMath::RandRange(0, 99);
 	UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bIsCriticalHit);
+
 	Damage *= (100.f - EffectiveArmor * EffectiveArmorC) / 100.f;
 	Damage = bIsCriticalHit ? 2.f * Damage + SourceCriticalHitDamage : Damage;
 

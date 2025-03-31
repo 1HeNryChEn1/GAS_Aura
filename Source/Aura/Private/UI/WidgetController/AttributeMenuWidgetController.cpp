@@ -3,12 +3,19 @@
 
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Player/AuraPlayerState.h"
 
 
+void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	UAuraAbilitySystemComponent* AuraAbilitySystemComponent = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	AuraAbilitySystemComponent->UpgradeAttribute(AttributeTag);
+}
+
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag,
-                                                            const FGameplayAttribute& Attribute) const
+															const FGameplayAttribute& Attribute) const
 {
 	FAuraAttributeInfo Info = AttributeInfo->FindAttributeInfoByTag(AttributeTag);
 	Info.AttributeValue = Attribute.GetNumericValue(AttributeSet);
@@ -19,13 +26,13 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
 	const UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(AttributeSet);
 	check(AttributeInfo);
-	for (auto& [Tag, AttributeFunctPtr] : AuraAttributeSet->TagsToAttributes)
+	for(auto& [Tag, AttributeFunctPtr] : AuraAttributeSet->TagsToAttributes)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeFunctPtr()).AddLambda(
-		[this, Tag, AttributeFunctPtr, AuraAttributeSet](const FOnAttributeChangeData& Data)
-		{
-			BroadcastAttributeInfo(Tag, AttributeFunctPtr());
-		});
+			[this, Tag, AttributeFunctPtr, AuraAttributeSet](const FOnAttributeChangeData& Data)
+			{
+				BroadcastAttributeInfo(Tag, AttributeFunctPtr());
+			});
 	}
 
 	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
@@ -39,7 +46,7 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
 	check(AttributeInfo);
 
-	for (auto& [Tag, AttributeFunctPtr] : AuraAttributeSet->TagsToAttributes)
+	for(auto& [Tag, AttributeFunctPtr] : AuraAttributeSet->TagsToAttributes)
 	{
 		BroadcastAttributeInfo(Tag, AttributeFunctPtr());
 	}

@@ -48,6 +48,8 @@ struct FAuraGameplayTags
 	FGameplayTag Input_Tag_2;
 	FGameplayTag Input_Tag_3;
 	FGameplayTag Input_Tag_4;
+	FGameplayTag InputTag_Passive_1;
+	FGameplayTag InputTag_Passive_2;
 
 	FGameplayTag Damage;
 	FGameplayTag Damage_Fire;

@@ -10,8 +10,7 @@
 
 void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {
-	UAuraAbilitySystemComponent* AuraAbilitySystemComponent = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-	AuraAbilitySystemComponent->UpgradeAttribute(AttributeTag);
+	GetAuraAbilitySystemComponent()->UpgradeAttribute(AttributeTag);
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag,
@@ -24,35 +23,30 @@ void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& 
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
-	const UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(AttributeSet);
 	check(AttributeInfo);
-	for(auto& [Tag, AttributeFunctPtr] : AuraAttributeSet->TagsToAttributes)
+	for(auto& [Tag, AttributeFunctPtr] : GetAuraAttributeSet()->TagsToAttributes)
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeFunctPtr()).AddLambda(
-			[this, Tag, AttributeFunctPtr, AuraAttributeSet](const FOnAttributeChangeData& Data)
+			[this, Tag, AttributeFunctPtr](const FOnAttributeChangeData& Data)
 			{
 				BroadcastAttributeInfo(Tag, AttributeFunctPtr());
 			});
 	}
 
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
-	AuraPlayerState->OnAttributePointsChangedDelegate.AddUObject(this, &UAttributeMenuWidgetController::OnAttributePointsChanged);
-	AuraPlayerState->OnSpellPointsChangedDelegate.AddUObject(this, &UAttributeMenuWidgetController::OnSpellPointsChanged);
+	GetAuraPlayerState()->OnAttributePointsChangedDelegate.AddUObject(this, &UAttributeMenuWidgetController::OnAttributePointsChanged);
+	GetAuraPlayerState()->OnSpellPointsChangedDelegate.AddUObject(this, &UAttributeMenuWidgetController::OnSpellPointsChanged);
 }
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
-
-	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
 	check(AttributeInfo);
 
-	for(auto& [Tag, AttributeFunctPtr] : AuraAttributeSet->TagsToAttributes)
+	for(auto& [Tag, AttributeFunctPtr] : GetAuraAttributeSet()->TagsToAttributes)
 	{
 		BroadcastAttributeInfo(Tag, AttributeFunctPtr());
 	}
 
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
-	AttributePointsChangedDelegate.Broadcast(AuraPlayerState->GetAttributePoints());
+	AttributePointsChangedDelegate.Broadcast(GetAuraPlayerState()->GetAttributePoints());
 }
 
 void UAttributeMenuWidgetController::OnAttributePointsChanged(int NewAttributePoints)

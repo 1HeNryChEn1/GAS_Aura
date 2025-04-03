@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Engine/DataTable.h"
 #include "Engine/Texture2D.h"
@@ -46,15 +45,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
-	TObjectPtr<UAbilityInfo> AbilityInfo;
-
 	template<typename T>
 	T* GetDateTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 
-	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC);
-
-	void OnXPChanged(int32 NewXP) const;
+	void OnXPChanged(int32 NewXP);
 
 	void OnPlayerLevelChanged(int32 NewPlayerLevel) const;
 
@@ -81,9 +75,6 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, category = "GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRow;
-
-	UPROPERTY(BlueprintAssignable, category = "GAS|Abilities")
-	FAbilityInfoSignature AbilityInfoDelegate;
 
 	UPROPERTY(BlueprintAssignable, category = "GAS|XP")
 	FOnPlayerStatChangedSignature OnXPPercentChangedDelegate;

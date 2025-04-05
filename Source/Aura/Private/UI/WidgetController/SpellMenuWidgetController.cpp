@@ -14,9 +14,14 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 			AbilityInfoDelegate.Broadcast(Info);
 		}
 	});
+	GetAuraPlayerState()->OnSpellPointsChangedDelegate.AddLambda([this](int32 SpellPoints)
+	 {
+		 SpellPointsChangedDelegate.Broadcast(SpellPoints); 
+	 });
 }
 
 void USpellMenuWidgetController::BroadcastInitialValues()
 {
 	BroadcastAbilityInfo();
+	SpellPointsChangedDelegate.Broadcast(GetAuraPlayerState()->GetSpellPoints());
 }

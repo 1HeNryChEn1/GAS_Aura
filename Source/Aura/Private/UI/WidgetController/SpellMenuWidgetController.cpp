@@ -9,6 +9,14 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 {
 	GetAuraAbilitySystemComponent()->AbilityStatusChanged.AddLambda([this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
 	{
+		if (SelectedAbility.Ability.MatchesTagExact(AbilityTag))
+		{
+			SelectedAbility.Status = StatusTag;
+			bool bShouldEnableSpellPointsButton = false;
+			bool bShouldEnableEquipButton = false;
+			ShouldEnableButtons(StatusTag, CurrentSpellPoints, bShouldEnableSpellPointsButton, bShouldEnableEquipButton);
+			SpellGlobeSelectedDelegate.Broadcast(bShouldEnableSpellPointsButton, bShouldEnableEquipButton);
+		}
 		if (AbilityInfo)
 		{
 			FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoByTag(AbilityTag);
@@ -18,7 +26,13 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 	});
 	GetAuraPlayerState()->OnSpellPointsChangedDelegate.AddLambda([this](int32 SpellPoints)
 	 {
-		 SpellPointsChangedDelegate.Broadcast(SpellPoints); 
+		 SpellPointsChangedDelegate.Broadcast(SpellPoints);
+		 CurrentSpellPoints = SpellPoints;
+
+		 bool bShouldEnableSpellPointsButton = false;
+		 bool bShouldEnableEquipButton = false;
+		 ShouldEnableButtons(SelectedAbility.Status, CurrentSpellPoints, bShouldEnableSpellPointsButton, bShouldEnableEquipButton);
+		 SpellGlobeSelectedDelegate.Broadcast(bShouldEnableSpellPointsButton, bShouldEnableEquipButton);
 	 });
 }
 
@@ -46,6 +60,8 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 	{
 		AbilityStatus = GetAuraAbilitySystemComponent()->GetStatusTagBySpec(*AbilitySpec);
 	}
+	SelectedAbility.Ability = AbilityTag;
+	SelectedAbility.Status = AbilityStatus;
 	bool bShouldEnableSpellPointsButton = false;
 	bool bShouldEnableEquipButton = false;
 	ShouldEnableButtons(AbilityStatus, SpellPoints, bShouldEnableSpellPointsButton, bShouldEnableEquipButton);

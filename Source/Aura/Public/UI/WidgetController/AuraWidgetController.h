@@ -72,6 +72,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UAbilityInfo> AbilityInfo;
+
 public:
 	UPROPERTY(BlueprintAssignable, category = "GAS|Abilities")
 	FAbilityInfoSignature AbilityInfoDelegate;

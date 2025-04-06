@@ -27,6 +27,9 @@ struct FAuraAbilityInfo
 	FGameplayTag StatusTag{};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AbilityType{};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UTexture2D> Icon = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

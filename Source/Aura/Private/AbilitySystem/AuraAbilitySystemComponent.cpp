@@ -181,7 +181,7 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 	}
 	// Locked Ability 
 	const UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
-	if (!AbilityTag.IsValid() || AbilityTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_None))
+	if (!AbilityInfo || !AbilityTag.IsValid() || AbilityTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_None))
 	{
 		OutDescription = FString();
 	}

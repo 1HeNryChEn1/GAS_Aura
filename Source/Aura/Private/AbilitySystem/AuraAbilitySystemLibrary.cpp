@@ -161,12 +161,11 @@ UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObj
 
 UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldContextObject)
 {
-	const auto AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (!AuraGameMode)
-	{
-		return nullptr;
-	}
-	return AuraGameMode->AbilityInfo;
+	if (const auto PlayerState = Cast<AAuraPlayerState>(UGameplayStatics::GetPlayerState(WorldContextObject, 0)))
+    {
+        return PlayerState->AbilityInfo;
+    }
+    return nullptr;
 }
 
 bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)

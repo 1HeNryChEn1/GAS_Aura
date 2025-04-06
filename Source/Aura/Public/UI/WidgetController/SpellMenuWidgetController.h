@@ -9,6 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FSpellGlobeSelectedSignature, bool, bSpendPointsButtonEnabled, bool, bEquipButtonEnabled,
 											  FString, DescriptionString, FString, NextLevelDescriptionString);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FWaitForEquipSelectionSignature, const FGameplayTag&, AbilityType);
 
 struct FSelectedAbility
 {
@@ -30,6 +31,8 @@ class AURA_API USpellMenuWidgetController : public UAuraWidgetController
 
 	int32 CurrentSpellPoints = 0;
 
+	bool bWaitingForEquipSelection = false;
+
 	static void ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints, bool& bShouldEnableSpellPointsButton, bool& bShouldEnableEquipButton);
 	
 public:
@@ -38,6 +41,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FSpellGlobeSelectedSignature SpellGlobeSelectedDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FWaitForEquipSelectionSignature WaitForEquipSelectionDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FWaitForEquipSelectionSignature StopWaitingForEquipDelegate;
 
 	virtual void BindCallbacksToDependencies() override;
 
@@ -48,5 +57,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SpendPointButtonPressed();
+
+	UFUNCTION(BlueprintCallable)
+	void GlobeDeselect();
+
+	UFUNCTION(BlueprintCallable)
+	void EquipButtonPressed();
 };
 

@@ -22,6 +22,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TMap<FGameplayTag, FScalableFloat> DamageTypes;
 
+	float GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType) const;
 public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* Target);

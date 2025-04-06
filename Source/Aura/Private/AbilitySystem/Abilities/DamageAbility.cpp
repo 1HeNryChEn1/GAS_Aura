@@ -5,6 +5,13 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
+
+float UDamageAbility::GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType) const
+{
+	checkf(DamageTypes.Contains(DamageType), TEXT("%s, %s"), *GetNameSafe(this), *DamageType.ToString());
+	return DamageTypes[DamageType].GetValueAtLevel(InLevel);
+}
 
 void UDamageAbility::CauseDamage(AActor* Target)
 {

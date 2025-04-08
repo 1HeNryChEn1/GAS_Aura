@@ -55,12 +55,11 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	HitResult.Location = ProjectileTargetLocation;
 	EffectContextHandle.AddHitResult(HitResult);
 	Projectile->DamageEffectSpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
-	for (auto&[Tag, Value] : DamageTypes)
-	{
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
-			Projectile->DamageEffectSpecHandle, 
-			Tag, 
-			Value.GetValueAtLevel(GetAbilityLevel()));
-	}
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+		Projectile->DamageEffectSpecHandle, 
+		DamageType, 
+		Damage.GetValueAtLevel(GetAbilityLevel()));
+	
 	Projectile->FinishSpawning(SpawnTransform);
 }

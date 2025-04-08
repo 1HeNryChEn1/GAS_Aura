@@ -5,27 +5,27 @@
 
 void UWaitCooldownChange::CooldownTagChanged(const FGameplayTag IncomingCooldownTag, int32 NewCount)
 {
-	if (NewCount == 0)
+	if(NewCount == 0)
 	{
 		CooldownEnd.Broadcast(0);
-		EndTask ();
+		EndTask();
 	}
 }
 
 void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC,
-	const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
+											  const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
 {
 	FGameplayTagContainer AssetTags, GrantedTags;
 	SpecApplied.GetAllAssetTags(AssetTags);
 	SpecApplied.GetAllGrantedTags(GrantedTags);
-	if (AssetTags.HasTagExact(CooldownTag) || GrantedTags.HasTagExact((CooldownTag)))
+	if(AssetTags.HasTagExact(CooldownTag) || GrantedTags.HasTagExact((CooldownTag)))
 	{
 		FGameplayEffectQuery GameplayEffectQuery = FGameplayEffectQuery::MakeQuery_MatchAllOwningTags(CooldownTag.GetSingleTagContainer());
 		TArray<float> TimesRemaining = ASC->GetActiveEffectsTimeRemaining(GameplayEffectQuery);
-		if (TimesRemaining.Num() > 0)
+		if(TimesRemaining.Num() > 0)
 		{
 			float HighestTime = TimesRemaining[0];
-			for (const float x : TimesRemaining)
+			for(const float x : TimesRemaining)
 			{
 				HighestTime = FMath::Max(HighestTime, x);
 			}
@@ -37,21 +37,21 @@ void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC
 
 UWaitCooldownChange* UWaitCooldownChange::WaitForCooldownChange(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& InCooldownTag)
 {
-	UWaitCooldownChange* WaitCooldownChange= NewObject<UWaitCooldownChange>();
+	UWaitCooldownChange* WaitCooldownChange = NewObject<UWaitCooldownChange>();
 	WaitCooldownChange->ASC = AbilitySystemComponent;
 	WaitCooldownChange->CooldownTag = InCooldownTag;
-	if (!IsValid (AbilitySystemComponent) || !InCooldownTag.IsValid ())
+	if(!IsValid(AbilitySystemComponent) || !InCooldownTag.IsValid())
 	{
 		WaitCooldownChange->EndTask();
 		return nullptr;
 	}
 	// To know when a cooldown has ended (Cooldown Tag has been removed)
 	AbilitySystemComponent->RegisterGameplayTagEvent(
-		InCooldownTag, 
+		InCooldownTag,
 		EGameplayTagEventType::NewOrRemoved
 	).AddUObject(
-			WaitCooldownChange,
-			&UWaitCooldownChange::CooldownTagChanged);
+		WaitCooldownChange,
+		&UWaitCooldownChange::CooldownTagChanged);
 
 	// To know when a cooldown effect has been applied
 	AbilitySystemComponent->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(
@@ -63,7 +63,7 @@ UWaitCooldownChange* UWaitCooldownChange::WaitForCooldownChange(UAbilitySystemCo
 
 void UWaitCooldownChange::EndTask()
 {
-	if (IsValid (ASC) && CooldownTag.IsValid ())
+	if(IsValid(ASC) && CooldownTag.IsValid())
 	{
 		ASC->RegisterGameplayTagEvent(
 			CooldownTag,

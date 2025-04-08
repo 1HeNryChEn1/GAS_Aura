@@ -20,9 +20,23 @@ protected:
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+	FGameplayTag DamageType;
 
-	float GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType) const;
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	FScalableFloat Damage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float DebuffChance = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float DebuffDamage = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float DebuffFrequency = 1.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float DebuffDuration = 5.f;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* Target);

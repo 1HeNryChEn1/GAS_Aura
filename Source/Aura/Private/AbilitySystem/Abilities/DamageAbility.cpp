@@ -5,22 +5,14 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AuraGameplayTags.h"
-
-float UDamageAbility::GetDamageByDamageType(float InLevel, const FGameplayTag& DamageType) const
-{
-	checkf(DamageTypes.Contains(DamageType), TEXT("%s, %s"), *GetNameSafe(this), *DamageType.ToString());
-	return DamageTypes[DamageType].GetValueAtLevel(InLevel);
-}
 
 void UDamageAbility::CauseDamage(AActor* Target)
 {
 	auto DamageSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, 1.f);
-	for (auto [Tag, ScalableFloat] : DamageTypes)
-	{
-		float ScaledDamage = ScalableFloat.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, Tag, ScaledDamage);
-	}
+
+	float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageSpecHandle, DamageType, ScaledDamage);
+
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(),UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target));
 }
 

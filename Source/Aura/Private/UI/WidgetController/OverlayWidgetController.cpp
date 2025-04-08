@@ -46,13 +46,19 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	    OnMaxManaChanged.Broadcast(Data.NewValue);
 	});
 
-	if (GetAuraAbilitySystemComponent()->bStartupAbilitiesGiven)  // When callback binding is slower than the initialization of Abilities.
+	if (GetAuraAbilitySystemComponent())
 	{
-		BroadcastInitialValues();
-	}
-	else
-	{
-		GetAuraAbilitySystemComponent()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
+		GetAuraAbilitySystemComponent()->AbilityEquipped.AddUObject(this, &UOverlayWidgetController::OnAbilityEquipped);
+
+		if (GetAuraAbilitySystemComponent()->bStartupAbilitiesGiven)  // When callback binding is slower than the initialization of Abilities.
+		{
+			BroadcastInitialValues();
+		}
+		else
+		{
+			GetAuraAbilitySystemComponent()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
+		}
+		
 	}
 
 	GetAuraAbilitySystemComponent()->EffectAssetTags.AddLambda(
@@ -106,4 +112,21 @@ void UOverlayWidgetController::OnAttributePointsChanged(int32 NewAttributePoints
 void UOverlayWidgetController::OnSpellPointsChanged(int32 NewSpellPoints) const
 {
 	OnSpellPointsChangedDelegate.Broadcast(NewSpellPoints);
+}
+
+void UOverlayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot) const 
+{
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+
+	FAuraAbilityInfo LastSlotInfo;
+	LastSlotInfo.StatusTag = GameplayTags.Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag = PreviousSlot;
+	LastSlotInfo.AbilityTag = GameplayTags.Abilities_None;
+	// Broadcast empty info if PreviousSlot is a valid slot. Only if equipping an already-equipped spell
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+
+	FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoByTag(AbilityTag);
+	Info.StatusTag = Status;
+	Info.InputTag = Slot;
+	AbilityInfoDelegate.Broadcast(Info);
 }

@@ -20,7 +20,6 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> ASC;
 	
-	UPROPERTY()
 	FGameplayTag CooldownTag;
 
 	void CooldownTagChanged(const FGameplayTag IncomingCooldownTag, int32 NewCount);

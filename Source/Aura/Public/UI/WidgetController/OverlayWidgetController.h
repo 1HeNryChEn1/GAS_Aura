@@ -21,10 +21,10 @@ struct FUIWidgetRow : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FGameplayTag MessageTag = FGameplayTag();
+	FGameplayTag MessageTag{};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FText Message = FText();
+	FText Message{};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UAuraUserWidget> MessageWidget;
@@ -56,6 +56,7 @@ protected:
 
 	void OnSpellPointsChanged(int32 NewSpellPoints) const;
 
+	void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot) const; 
 public:
 	virtual void BroadcastInitialValues() override;
 

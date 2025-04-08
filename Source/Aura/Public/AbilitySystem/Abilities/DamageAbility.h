@@ -7,6 +7,7 @@
 #include "Interaction/CombatInterface.h"
 #include "DamageAbility.generated.h"
 
+struct FDamageEffectParams;
 /**
  * 
  */
@@ -40,6 +41,17 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* Target);
+
+	UFUNCTION(BlueprintPure)
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(
+		AActor* TargetActor = nullptr,
+		FVector InRadialDamageOrigin = FVector::ZeroVector,
+		bool bOverrideKnockbackDirection = false,
+		FVector KnockbackDirectionOverride = FVector::ZeroVector,
+		bool bOverrideDeathImpulse = false,
+		FVector DeathImpulseDirectionOverride = FVector::ZeroVector,
+		bool bOverridePitch = false,
+		float PitchOverride = 0.f) const;
 
 	UFUNCTION(Blueprintpure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages);

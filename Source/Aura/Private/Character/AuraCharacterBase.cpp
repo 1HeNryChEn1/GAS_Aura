@@ -157,6 +157,16 @@ ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation()
 	return CharacterClass;
 }
 
+FOnASCRegistered& AAuraCharacterBase::GetOnASCRegisteredDelegate()
+{
+	return OnASCRegisteredDelegate;
+}
+
+FOnDeathSignature& AAuraCharacterBase::GetOnDeathDelegate()
+{
+	return OnDeathDelegate;
+}
+
 void AAuraCharacterBase::Dissolve()
 {
 	if (IsValid(DissolveMaterialInstance))

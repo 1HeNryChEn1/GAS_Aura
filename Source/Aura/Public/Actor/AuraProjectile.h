@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AuraAbilityTypes.h"
 #include "GameplayEffectTypes.h"
 #include "NiagaraSystem.h"
 #include "GameFramework/Actor.h"
@@ -39,6 +40,10 @@ class AURA_API AAuraProjectile : public AActor
 protected:
 	virtual void BeginPlay() override;
 
+	void OnHit();
+
+	bool IsValidOverlap(AActor* OtherActor);
+
 	virtual void Destroyed() override;
 
 	UFUNCTION()
@@ -52,5 +57,5 @@ public:
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
-	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+	FDamageEffectParams DamageEffectParams;
 };

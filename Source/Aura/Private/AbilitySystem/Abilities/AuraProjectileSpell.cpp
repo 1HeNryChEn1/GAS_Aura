@@ -36,30 +36,15 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		Rotation.Pitch = PitchOverride;
 	}
 	SpawnTransform.SetRotation(Rotation.Quaternion());
-
-	AActor* OwningActor = GetOwningActorFromActorInfo();
+		
 	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 		ProjectileClass,
 		SpawnTransform,
-		OwningActor,
-		Cast<APawn>(OwningActor),
+		GetOwningActorFromActorInfo(),
+		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-
-	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OwningActor);
-	auto EffectContextHandle = SourceASC->MakeEffectContext();
-	EffectContextHandle.SetAbility(this);
-	EffectContextHandle.AddSourceObject(Projectile);
-	TArray<TWeakObjectPtr<AActor>> Actors = {Projectile};
-	EffectContextHandle.AddActors(Actors);
-	FHitResult HitResult;
-	HitResult.Location = ProjectileTargetLocation;
-	EffectContextHandle.AddHitResult(HitResult);
-	Projectile->DamageEffectSpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
-
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
-		Projectile->DamageEffectSpecHandle, 
-		DamageType, 
-		Damage.GetValueAtLevel(GetAbilityLevel()));
 	
+	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+
 	Projectile->FinishSpawning(SpawnTransform);
 }

@@ -26,6 +26,10 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 protected:
+	FOnASCRegistered OnASCRegisteredDelegate;
+
+	FOnDeathSignature OnDeathDelegate;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass;
 
@@ -144,5 +148,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
-
+	
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
+	
+	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 };

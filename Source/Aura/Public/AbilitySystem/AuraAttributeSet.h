@@ -67,13 +67,20 @@ class AURA_API UAuraAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 
-	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const ;
+	void HandleIncomingDamage(const FEffectProperties& Props);
 
-	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit);
+	void HandleIncomingXP(const FEffectProperties& Props);
+
+	void Debuff(const FEffectProperties& Props);
+
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
+
+	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const;
 
 	void SendXPEvent(const FEffectProperties& Props);
 
 	bool bTopOffHealth = false;
+
 	bool bTopOffMana = false;
 
 public:

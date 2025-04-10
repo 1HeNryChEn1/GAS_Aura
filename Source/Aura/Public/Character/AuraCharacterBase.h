@@ -9,6 +9,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UDebuffNiagaraComponent;
 class UMaterialInstanceDynamic;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -86,6 +87,11 @@ protected:
 	// Minions
 	int32 MinionCount = 0;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UDebuffNiagaraComponent> StunDebuffComponent;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartSpawningTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
@@ -144,12 +150,12 @@ public:
 	virtual void IncremenetMinionCount_Implementation(int32 Amount) override;
 
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
+
+	virtual FOnDeathSignature& GetOnDeathDelegate() override;
+
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 	/* End Combat Interface */
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
-	
-	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
-	
-	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 };

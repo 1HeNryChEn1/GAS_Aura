@@ -23,7 +23,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 {
 	if (!GetAvatarActorFromActorInfo()->HasAuthority())
 	{
-		// TODO : Do some prediction of Projectile before Server replication completed
+		// TODO: Do some prediction of Projectile before Server replication completed
 		return;
 	}
 	// Set Projectile Spell Rotation

@@ -101,40 +101,84 @@ protected:
 
 	TSharedPtr<FGameplayTag> DamageType;
 
+	UPROPERTY()
+	FVector DeathImpulse = FVector::ZeroVector;
+
+	UPROPERTY()
+	FVector KnockbackForce = FVector::ZeroVector;
+
 public:
-	bool IsCriticalHit() const
-	{
+	bool IsCriticalHit() const {
 		return bIsCriticalHit;
 	}
 
-	bool IsBlockedHit() const
-	{
+	bool IsBlockedHit() const {
 		return bIsBlockedHit;
 	}
-	
-	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
 
-	void SetIsCriticalHit(const bool bInIsCriticalHit){ bIsCriticalHit = bInIsCriticalHit; }
+	bool IsSuccessfulDebuff() const {
+		return bIsSuccessfulDebuff;
+	}
 
-	void SetIsBlockedHit(const bool bInIsBlockedHit){ bIsBlockedHit = bInIsBlockedHit; }
+	float GetDebuffDamage() const {
+		return DebuffDamage;
+	}
 
-	void SetIsSuccessfulDebuff(const bool bInIsDebuff) { bIsSuccessfulDebuff = bInIsDebuff; }
+	float GetDebuffDuration() const {
+		return DebuffDuration;
+	}
 
-	void SetDebuffDamage(const float InDamage) { DebuffDamage = InDamage; }
+	float GetDebuffFrequency() const {
+		return DebuffFrequency;
+	}
 
-	void SetDebuffDuration(const float InDuration) { DebuffDuration = InDuration; }
+	TSharedPtr<FGameplayTag> GetDamageType() const {
+		return DamageType;
+	}
 
-	void SetDebuffFrequency(const float InFrequency) { DebuffFrequency = InFrequency; }
+	FVector GetDeathImpulse() const {
+		return DeathImpulse;
+	}
 
-	void SetDamageType(const TSharedPtr<FGameplayTag>& InDamageType) { DamageType = InDamageType; }
+	FVector GetKnockbackForce() const {
+		return KnockbackForce;
+	}
 
-	float GetDebuffDamage() const { return DebuffDamage; }
+	void SetIsCriticalHit(bool bInIsCriticalHit) {
+		bIsCriticalHit = bInIsCriticalHit;
+	}
 
-	float GetDebuffDuration() const { return DebuffDuration; }
+	void SetIsBlockedHit(bool bInIsBlockedHit) {
+		bIsBlockedHit = bInIsBlockedHit;
+	}
 
-	float GetDebuffFrequency() const { return DebuffFrequency; }
+	void SetIsSuccessfulDebuff(bool bInIsDebuff) {
+		bIsSuccessfulDebuff = bInIsDebuff;
+	}
 
-	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
+	void SetDebuffDamage(float InDamage) {
+		DebuffDamage = InDamage;
+	}
+
+	void SetDebuffDuration(float InDuration) {
+		DebuffDuration = InDuration;
+	}
+
+	void SetDebuffFrequency(float InFrequency) {
+		DebuffFrequency = InFrequency;
+	}
+
+	void SetDamageType(const TSharedPtr<FGameplayTag>& InDamageType) {
+		DamageType = InDamageType;
+	}
+
+	void SetDeathImpulse(const FVector& InImpulse) {
+		DeathImpulse = InImpulse;
+	}
+
+	void SetKnockbackForce(const FVector& InForce) {
+		KnockbackForce = InForce;
+	}
 
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const override;

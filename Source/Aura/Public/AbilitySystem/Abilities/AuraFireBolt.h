@@ -20,7 +20,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "FireBolt")
 	int32 MaxNumProjectiles = 5;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "FireBolt")
 	bool bLaunchHomingAcceleration = true;
 

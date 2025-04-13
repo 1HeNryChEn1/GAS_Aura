@@ -41,7 +41,7 @@ class UCombatInterface : public UInterface
 };
 
 /**
- * 
+ *
  */
 class AURA_API ICombatInterface
 {
@@ -90,4 +90,10 @@ public:
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() = 0;
 
 	virtual FOnDeathSignature& GetOnDeathDelegate() = 0;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetInShockLoop(bool bInLoop);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	USkeletalMeshComponent* GetWeapon();
 };

@@ -152,5 +152,4 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 		}
 		Projectile->FinishSpawning(SpawnTransform);
 	}
-
 }

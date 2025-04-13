@@ -15,19 +15,19 @@ class AURA_API AAuraCharacter : public AAuraCharacterBase, public IPlayerInterfa
 {
 	GENERATED_BODY()
 
-	UPROPERTY (EditAnywhere, Category = "SpringArm")
+	UPROPERTY(EditAnywhere, Category = "SpringArm")
 	TObjectPtr<USpringArmComponent> SpringArm;
 
-	UPROPERTY (EditAnywhere, Category = "Camera")
+	UPROPERTY(EditAnywhere, Category = "Camera")
 	TObjectPtr<UCameraComponent> Camera;
 
 	virtual void InitAbilityActorInfo() override;
 
-	UFUNCTION (NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUpParticles();
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
-	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;  
+	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
 	AAuraCharacter();
 

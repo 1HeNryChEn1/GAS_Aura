@@ -7,7 +7,7 @@
 #include "SummonAbility.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API USummonAbility : public UAuraGameplayAbility

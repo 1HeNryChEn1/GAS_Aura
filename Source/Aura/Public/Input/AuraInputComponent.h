@@ -8,7 +8,7 @@
 #include "AuraInputComponent.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API UAuraInputComponent : public UEnhancedInputComponent
@@ -27,19 +27,19 @@ void UAuraInputComponent::BindAbilityActions(const UAuraInputConfig* InputConfig
 {
 	check(InputConfig);
 
-	for (const FAuraInputAction& Action : InputConfig->AbilityInputActions)
+	for(const FAuraInputAction& Action : InputConfig->AbilityInputActions)
 	{
-		if (Action.InputAction && Action.InputTag.IsValid())
+		if(Action.InputAction && Action.InputTag.IsValid())
 		{
-			if (PressedFunc)
+			if(PressedFunc)
 			{
 				BindAction(Action.InputAction, ETriggerEvent::Started, Object, PressedFunc, Action.InputTag);
 			}
-			if (HeldFunc)
+			if(HeldFunc)
 			{
 				BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, HeldFunc, Action.InputTag);
 			}
-			if (ReleasedFunc)
+			if(ReleasedFunc)
 			{
 				BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc, Action.InputTag);
 			}

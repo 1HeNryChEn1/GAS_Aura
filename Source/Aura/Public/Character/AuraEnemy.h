@@ -12,7 +12,7 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
@@ -43,7 +43,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
-	
+
 	UPROPERTY()
 	TObjectPtr<AAuraAIController> AuraAIController;
 
@@ -63,7 +63,7 @@ public:
 
 	virtual void UnHighlightActor() override;
 	//~ End Enemy Interface 
-	
+
 	//~ Begin Combat Interface
 	virtual int32 GetPlayerLevel_Implementation() override;
 

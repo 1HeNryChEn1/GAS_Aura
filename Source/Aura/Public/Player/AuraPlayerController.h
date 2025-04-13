@@ -11,6 +11,7 @@
 #include "GameFramework/Character.h"
 #include "AuraPlayerController.generated.h"
 
+class UNiagaraSystem;
 class USplineComponent;
 class UAuraAbilitySystemComponent;
 class UAuraInputConfig;
@@ -25,13 +26,13 @@ class AURA_API AAuraPlayerController : public APlayerController
 	GENERATED_BODY()
 
 private:
-	UPROPERTY (EditAnywhere, Category = "GAS|Input")
+	UPROPERTY(EditAnywhere, Category = "GAS|Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
 
-	UPROPERTY (EditAnywhere, Category = "GAS|Input")
+	UPROPERTY(EditAnywhere, Category = "GAS|Input")
 	TObjectPtr<UInputAction> MoveAction;
 
-	UPROPERTY (EditAnywhere, Category = "GAS|Input")
+	UPROPERTY(EditAnywhere, Category = "GAS|Input")
 	TObjectPtr<UInputAction> ShiftAction;
 
 	IEnemyInterface* LastActor;
@@ -43,7 +44,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
-	
+
 	/** Click to move **/
 	FVector CachedDestination = FVector::ZeroVector;
 	float FollowTime;
@@ -60,11 +61,18 @@ private:
 	/** End Click to move **/
 
 	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> ClickNiagaraSystem;
+
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
-	void ShiftPressed() {bShiftKeyDown = true;}
+	void ShiftPressed() {
+		bShiftKeyDown = true;
+	}
 
-	void ShiftReleased() {bShiftKeyDown = false;}
+	void ShiftReleased() {
+		bShiftKeyDown = false;
+	}
 
 	void Move(const FInputActionValue& InputActionValue);
 
@@ -83,7 +91,7 @@ private:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
-	
+
 public:
 	AAuraPlayerController();
 
@@ -91,5 +99,8 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
+
+	UFUNCTION(BlueprintCallable)
+	void SetAutoRunning(const bool bAutoRun) { bAutoRunning = bAutoRun; }
 };
 

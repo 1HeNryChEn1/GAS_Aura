@@ -7,11 +7,11 @@
 #include "HitReactAbility.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API UHitReactAbility : public UAuraGameplayAbility
 {
 	GENERATED_BODY()
-	
+
 };

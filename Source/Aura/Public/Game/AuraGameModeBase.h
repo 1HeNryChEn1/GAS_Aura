@@ -8,7 +8,7 @@
 #include "AuraGameModeBase.generated.h"
 class UAbilityInfo;
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API AAuraGameModeBase : public AGameModeBase

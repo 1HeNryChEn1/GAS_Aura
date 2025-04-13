@@ -63,7 +63,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
-	
+
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 
@@ -94,17 +94,17 @@ protected:
 	TObjectPtr<UDebuffNiagaraComponent> StunDebuffComponent;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void StartSpawningTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
+	void StartSpawningTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void StartWeaponSpawningTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
+	void StartWeaponSpawningTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance); 
+	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicDissolveMaterialInstance);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void Dissolve();
 
@@ -126,7 +126,9 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	UAttributeSet* GetAttributeSet() const {
+		return AttributeSet;
+	}
 
 	/* Combat Interface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
@@ -154,6 +156,8 @@ public:
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
+
+	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
 	/* End Combat Interface */
 
 	UFUNCTION(NetMulticast, Reliable)

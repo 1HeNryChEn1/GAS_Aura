@@ -22,13 +22,13 @@ struct FAuraInputAction
 };
 
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API UAuraInputConfig : public UDataAsset
 {
 	GENERATED_BODY()
-	
+
 public:
 	const UInputAction* FindAbilityInputActionByTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
 

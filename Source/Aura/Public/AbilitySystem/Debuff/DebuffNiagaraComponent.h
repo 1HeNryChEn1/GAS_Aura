@@ -8,13 +8,13 @@
 #include "DebuffNiagaraComponent.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API UDebuffNiagaraComponent : public UNiagaraComponent
 {
 	GENERATED_BODY()
-	
+
 protected:
 	virtual void BeginPlay() override;
 

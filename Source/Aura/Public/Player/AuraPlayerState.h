@@ -8,12 +8,13 @@
 #include "GameFramework/PlayerState.h"
 #include "AuraPlayerState.generated.h"
 
+class UAbilityInfo;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /*StatValue*/);
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API AAuraPlayerState : public APlayerState, public IAbilitySystemInterface
@@ -29,12 +30,12 @@ class AURA_API AAuraPlayerState : public APlayerState, public IAbilitySystemInte
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_SpellPoints)
 	int32 SpellPoints = 0;
 
-	UPROPERTY (VisibleAnywhere, ReplicatedUsing = OnRep_AttributePoints)
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_AttributePoints)
 	int32 AttributePoints = 0;
 
 	UFUNCTION()
 	void OnRep_PlayerLevel(int32 OldPlayerLevel);
-	
+
 	UFUNCTION()
 	void OnRep_XP(int32 OldXP);
 
@@ -65,7 +66,7 @@ public:
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
 
 	UPROPERTY(EditDefaultsOnly)
-    TObjectPtr<UAbilityInfo> AbilityInfo;
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 
 	AAuraPlayerState();
 
@@ -73,15 +74,25 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	UAttributeSet* GetAttributeSet() const {
+		return AttributeSet;
+	}
 
-	FORCEINLINE int32 GetPlayerLevel() const {return PlayerLevel;}
+	FORCEINLINE int32 GetPlayerLevel() const {
+		return PlayerLevel;
+	}
 
-	FORCEINLINE int32 GetXP() const {return XP;}
+	FORCEINLINE int32 GetXP() const {
+		return XP;
+	}
 
-	FORCEINLINE int32 GetSpellPoints () const {return SpellPoints;}
+	FORCEINLINE int32 GetSpellPoints() const {
+		return SpellPoints;
+	}
 
-	FORCEINLINE int32 GetAttributePoints () const {return AttributePoints;}
+	FORCEINLINE int32 GetAttributePoints() const {
+		return AttributePoints;
+	}
 
 	void AddToXP(int32 InXP);
 

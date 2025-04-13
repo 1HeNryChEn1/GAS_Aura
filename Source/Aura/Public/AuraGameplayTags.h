@@ -35,7 +35,7 @@ struct FAuraGameplayTags
 	FGameplayTag Attributes_Secondary_ManaRegeneration;
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
-	
+
 	FGameplayTag Attributes_Meta_IncomingXP;
 
 	FGameplayTag InputTag_LMB;
@@ -69,10 +69,10 @@ struct FAuraGameplayTags
 	FGameplayTag Debuff_Frequency;
 
 	FGameplayTag Abilities_None;
-	
+
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
-	
+
 	FGameplayTag Abilities_HitReact;
 
 	FGameplayTag Abilities_Status_Locked;
@@ -83,9 +83,9 @@ struct FAuraGameplayTags
 	FGameplayTag Abilities_Type_Offensive;
 	FGameplayTag Abilities_Type_Passive;
 	FGameplayTag Abilities_Type_None;
-	
+
 	FGameplayTag Abilities_Fire_FireBolt;
-	FGameplayTag Abilities_Fire_FireBlast;	
+	FGameplayTag Abilities_Fire_FireBlast;
 	FGameplayTag Abilities_Lightning_Electrocute;
 	FGameplayTag Abilities_Arcane_ArcaneShards;
 
@@ -105,7 +105,7 @@ struct FAuraGameplayTags
 	FGameplayTag Montage_Attack_2;
 	FGameplayTag Montage_Attack_3;
 	FGameplayTag Montage_Attack_4;
-	
+
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
 

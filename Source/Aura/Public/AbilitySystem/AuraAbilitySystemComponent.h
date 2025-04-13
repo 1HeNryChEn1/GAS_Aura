@@ -25,7 +25,7 @@ protected:
 	void ClientEffectApplied(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle);
 
 	virtual void OnRep_ActivateAbilities() override;
-	
+
 	UFUNCTION(Client, Reliable)
 	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, int32 AbilityLevel);
 
@@ -47,6 +47,8 @@ public:
 
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
 
+	void AbilityInputTagPressed(const FGameplayTag& InputTag);
+
 	void AbilityInputTagHeld(const FGameplayTag& InputTag);
 
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
@@ -54,7 +56,7 @@ public:
 	void ForEachAbility(const FForEachAbility& Delegate);
 
 	static void ClearSlot(FGameplayAbilitySpec* SpecWithSlot);
-	
+
 	static bool AbilityHasSlot(const FGameplayAbilitySpec& Spec, const FGameplayTag& Slot);
 	static bool AbilityHasSlot(FGameplayAbilitySpec* Spec, const FGameplayTag& Slot);
 

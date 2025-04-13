@@ -7,7 +7,7 @@
 #include "AuraAbilitySystemGlobals.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class AURA_API UAuraAbilitySystemGlobals : public UAbilitySystemGlobals

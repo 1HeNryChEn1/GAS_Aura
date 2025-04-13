@@ -14,7 +14,7 @@ class UPlayerInterface : public UInterface
 };
 
 /**
- * 
+ *
  */
 class AURA_API IPlayerInterface
 {

@@ -14,7 +14,7 @@ class UEnemyInterface : public UInterface
 };
 
 /**
- * 
+ *
  */
 class AURA_API IEnemyInterface
 {

@@ -67,3 +67,8 @@ FTaggedMontage UDamageAbility::GetRandomTaggedMontageFromArray(const TArray<FTag
 	const auto Selection = FMath::RandRange(0, TaggedMontages.Num() - 1);
 	return TaggedMontages[Selection];
 }
+
+float UDamageAbility::GetDamageAtLevel() const
+{
+	return Damage.GetValueAtLevel(GetAbilityLevel());
+}

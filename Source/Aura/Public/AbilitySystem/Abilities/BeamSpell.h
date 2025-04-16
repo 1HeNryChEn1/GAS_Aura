@@ -15,14 +15,6 @@ class AURA_API UBeamSpell : public UDamageAbility
 	GENERATED_BODY()
 
 protected:
-	UFUNCTION(BlueprintCallable)
-	void StoreMouseDataInfo(const FHitResult& HitResult);
-
-	UFUNCTION(BlueprintCallable)
-	void StoreOwnerVariables();
-
-
-public:
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	FVector MouseHitLocation;
 
@@ -34,4 +26,25 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	TObjectPtr<ACharacter> OwnerCharacter;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Beam")
+	int32 MaxNumShockTargets = 4;
+public:
+	UFUNCTION(BlueprintCallable)
+	void StoreMouseDataInfo(const FHitResult& HitResult);
+
+	UFUNCTION(BlueprintCallable)
+	void StoreOwnerVariables();
+
+	UFUNCTION(BlueprintCallable)
+	void TraceFirstTarget(const FVector& BeamTargetLocation);
+
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrimaryTargetDied(AActor* DeadActor);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AdditionalTargetDied(AActor* DeadActor);
 };

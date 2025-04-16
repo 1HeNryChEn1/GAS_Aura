@@ -64,4 +64,7 @@ public:
 
 	UFUNCTION(Blueprintpure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages);
+
+	UFUNCTION(Blueprintpure)
+	float GetDamageAtLevel() const ;
 };

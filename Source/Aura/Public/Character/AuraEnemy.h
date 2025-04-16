@@ -36,9 +36,6 @@ protected:
 	bool bHitReacting;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float BaseWalkSpeed = 250.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
@@ -55,6 +52,8 @@ protected:
 	virtual void InitAbilityActorInfo() override;
 
 	virtual void InitializeDefaultAttributes() const override;
+
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
 public:
 	AAuraEnemy();
 

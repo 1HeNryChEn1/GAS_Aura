@@ -29,23 +29,24 @@ AAuraEnemy::AAuraEnemy()
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	BaseWalkSpeed = 350.f;
 }
 
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	InitAbilityActorInfo();
-	if (HasAuthority())
+	if(HasAuthority())
 	{
 		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, CharacterClass);
 	}
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
-	if (const auto AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
+	if(const auto AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
 		AuraUserWidget->SetWidgetController(this);
 	}
 
-	if (const UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(AttributeSet))
+	if(const UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(AttributeSet))
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
@@ -73,7 +74,8 @@ void AAuraEnemy::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
-	if (HasAuthority())
+	AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAuraEnemy::StunTagChanged);
+	if(HasAuthority())
 	{
 		InitializeDefaultAttributes();
 	}
@@ -83,6 +85,16 @@ void AAuraEnemy::InitAbilityActorInfo()
 void AAuraEnemy::InitializeDefaultAttributes() const
 {
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, AbilitySystemComponent, CharacterClass, PlayerLevel);
+}
+
+void AAuraEnemy::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	Super::StunTagChanged(CallbackTag, NewCount);
+
+	if(HasAuthority())
+	{
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Stunned"), bIsStunned);
+	}
 }
 
 void AAuraEnemy::HighlightActor()
@@ -108,7 +120,7 @@ void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 50.f : BaseWalkSpeed;
-	if (HasAuthority())
+	if(HasAuthority())
 	{
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
 	}
@@ -117,7 +129,7 @@ void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 void AAuraEnemy::Die(const FVector& DeathImpulse)
 {
 	SetLifeSpan(LifeSpan);
-	if (AuraAIController)
+	if(AuraAIController)
 	{
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
 	}
@@ -135,7 +147,7 @@ AActor* AAuraEnemy::GetCombatTarget_Implementation() const
 }
 
 // PossessedBy only runs on the server
-void AAuraEnemy::PossessedBy (AController *NewController)
+void AAuraEnemy::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 

@@ -58,6 +58,13 @@ void UBeamSpell::TraceFirstTarget(const FVector& BeamTargetLocation)
 			}
 		}
 	}
+	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(MouseHitActor))
+	{
+		if(!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this, &UBeamSpell::PrimaryTargetDied))
+		{
+			CombatInterface->GetOnDeathDelegate().AddDynamic(this, &UBeamSpell::PrimaryTargetDied);
+		}
+	}
 }
 
 void UBeamSpell::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets)

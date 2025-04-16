@@ -52,6 +52,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName TailSocketName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 800.f;
+
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -122,7 +125,18 @@ protected:
 	void AddCharacterAbilities() const;
 
 public:
+	UPROPERTY(ReplicatedUsing = OnRep_Stunned, BlueprintReadOnly)
+	bool bIsStunned = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Burned, BlueprintReadOnly)
+	bool bIsBurned = false;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bIsBeingShocked = false;
+
 	AAuraCharacterBase();
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
@@ -158,8 +172,20 @@ public:
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
+
+	virtual void SetIsBeingShocked_Implementation(bool bInLoop) override;
+
+	virtual bool IsBeingShocked_Implementation() const override;
 	/* End Combat Interface */
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
+
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+
+	UFUNCTION()
+	virtual void OnRep_Stunned();
+
+	UFUNCTION()
+	virtual void OnRep_Burned();
 };

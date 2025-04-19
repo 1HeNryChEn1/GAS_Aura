@@ -14,6 +14,9 @@ DECLARE_MULTICAST_DELEGATE(FAbilityGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FAbilityStatusChanged, const FGameplayTag& /* AbilityTag */, const FGameplayTag& /* StatusTag */, int32 /* AbilityLevel */);
 DECLARE_MULTICAST_DELEGATE_FourParams(FAbilityEquipped, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /*Status*/, const FGameplayTag& /*Slot*/, const FGameplayTag& /*PrevSlot*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeactivatePassiveAbility, const FGameplayTag& /*AbilityTag*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FActivatePassiveEffect, const FGameplayTag& /*AbilityTag*/, bool /*bActivate*/);
+
 
 UCLASS()
 class AURA_API UAuraAbilitySystemComponent : public UAbilitySystemComponent
@@ -38,6 +41,10 @@ public:
 
 	FAbilityEquipped AbilityEquipped;
 
+	FDeactivatePassiveAbility DeactivatePassiveAbility;
+
+	FActivatePassiveEffect ActivatePassiveEffect;
+
 	bool bStartupAbilitiesGiven = false;
 
 	void AbilityActorInfoSet();
@@ -55,10 +62,11 @@ public:
 
 	void ForEachAbility(const FForEachAbility& Delegate);
 
+	bool IsPassiveAbility(const FGameplayAbilitySpec& SpecWithSlot);
+
 	static void ClearSlot(FGameplayAbilitySpec* SpecWithSlot);
 
 	static bool AbilityHasSlot(const FGameplayAbilitySpec& Spec, const FGameplayTag& Slot);
-	static bool AbilityHasSlot(FGameplayAbilitySpec* Spec, const FGameplayTag& Slot);
 
 	void ClearAbilitiesOfSlot(const FGameplayTag& Slot);
 
@@ -72,9 +80,7 @@ public:
 	static void AssignSlotToAbility(FGameplayAbilitySpec& Spec, const FGameplayTag& Slot);
 
 	static FGameplayTag GetAbilityTagBySpec(const FGameplayAbilitySpec& AbilitySpec);
-
-	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
-
+	static FGameplayTag GetInputTagBySpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetStatusTagBySpec(const FGameplayAbilitySpec& AbilitySpec);
 
 	FGameplayTag GetStatusFromAbilityTag(const FGameplayTag& AbilityTag);
@@ -99,5 +105,8 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerEquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& Slot);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastActivatePassiveEffect(const FGameplayTag& AbilityTag, bool bActivate);
 }
 ;

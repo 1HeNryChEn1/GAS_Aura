@@ -43,10 +43,6 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USceneComponent> EffectAttachComponent;
 protected:
-	FOnASCRegistered OnASCRegisteredDelegate;
-
-	FOnDeathSignature OnDeathDelegate;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	ECharacterClass CharacterClass;
 
@@ -147,11 +143,19 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	bool bIsBeingShocked = false;
 
+	FOnASCRegistered OnASCRegisteredDelegate;
+
+	FOnDeathSignature OnDeathDelegate;
+
+	FOnDamageSignature OnDamageDelegate;
+
 	AAuraCharacterBase();
 
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
@@ -185,6 +189,8 @@ public:
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
+
+	virtual FOnDamageSignature& GetOnDamageDelegate() override;
 
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
 

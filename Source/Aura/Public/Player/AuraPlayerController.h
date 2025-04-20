@@ -11,6 +11,7 @@
 #include "GameFramework/Character.h"
 #include "AuraPlayerController.generated.h"
 
+class AMagicCircle;
 class UNiagaraSystem;
 class USplineComponent;
 class UAuraAbilitySystemComponent;
@@ -66,6 +67,12 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AMagicCircle> MagicCircleClass;
+
+	UPROPERTY()
+	TObjectPtr<AMagicCircle> MagicCircle; 
+
 	void ShiftPressed() {
 		bShiftKeyDown = true;
 	}
@@ -88,6 +95,7 @@ private:
 
 	UAuraAbilitySystemComponent* GetASC();
 
+	void UpdateMagicCircleLocation();
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -102,5 +110,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetAutoRunning(const bool bAutoRun) { bAutoRunning = bAutoRun; }
-};
 
+	UFUNCTION(BlueprintCallable)
+	void ShowMagicCircle(UMaterialInterface* DecalMaterial = nullptr);
+
+	UFUNCTION(BlueprintCallable)
+	void HideMagicCircle();
+};

@@ -91,6 +91,8 @@ public:
 
 	virtual FOnDeathSignature& GetOnDeathDelegate() = 0;
 
+	virtual FOnDamageSignature& GetOnDamageDelegate() = 0;
+
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetInShockLoop(bool bInLoop);
 

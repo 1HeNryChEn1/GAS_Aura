@@ -16,7 +16,7 @@ class AURA_API UAuraGameplayAbility : public UGameplayAbility
 
 protected:
 	float GetManaCost(float InLevel = 1.f) const;
-	float GetCoolDown(float InLevel = 1.f) const;
+	float GetCooldown(float InLevel = 1.f) const;
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Input")

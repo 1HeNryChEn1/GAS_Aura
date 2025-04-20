@@ -107,7 +107,23 @@ protected:
 	UPROPERTY()
 	FVector KnockbackForce = FVector::ZeroVector;
 
+	UPROPERTY()
+	bool bIsRadialDamage = false;
+
+	UPROPERTY()
+	float RadialDamageInnerRadius = 0.f;
+
+	UPROPERTY()
+	float RadialDamageOuterRadius = 0.f;
+
+	UPROPERTY()
+	FVector RadialDamageOrigin = FVector::ZeroVector;
+
 public:
+
+	/*
+	 * Getter
+	 */
 	bool IsCriticalHit() const {
 		return bIsCriticalHit;
 	}
@@ -144,6 +160,25 @@ public:
 		return KnockbackForce;
 	}
 
+	bool IsRadialDamage() const {
+		return bIsRadialDamage;
+	}
+
+	float GetRadialDamageInnerRadius() const {
+		return RadialDamageInnerRadius;
+	}
+
+	float GetRadialDamageOuterRadius() const {
+		return RadialDamageOuterRadius;
+	}
+
+	FVector GetRadialDamageOrigin() const {
+		return RadialDamageOrigin;
+	}
+
+	/*
+	 * Setters
+	 */
 	void SetIsCriticalHit(bool bInIsCriticalHit) {
 		bIsCriticalHit = bInIsCriticalHit;
 	}
@@ -178,6 +213,22 @@ public:
 
 	void SetKnockbackForce(const FVector& InForce) {
 		KnockbackForce = InForce;
+	}
+
+	void SetIsRadialDamage(bool bInIsRadialDamage) {
+		bIsRadialDamage = bInIsRadialDamage;
+	}
+
+	void SetRadialDamageInnerRadius(float InRadius) {
+		RadialDamageInnerRadius = InRadius;
+	}
+
+	void SetRadialDamageOuterRadius(float InRadius) {
+		RadialDamageOuterRadius = InRadius;
+	}
+
+	void SetRadialDamageOrigin(const FVector& InOrigin) {
+		RadialDamageOrigin = InOrigin;
 	}
 
 	/** Returns the actual struct used for serialization, subclasses must override this! */

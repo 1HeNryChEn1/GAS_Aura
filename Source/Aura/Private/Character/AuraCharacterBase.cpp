@@ -63,6 +63,14 @@ void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 	DOREPLIFETIME(AAuraCharacterBase, bIsBeingShocked);
 }
 
+float AAuraCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+									 class AController* EventInstigator, AActor* DamageCauser)
+{
+	float DamageTaken = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	OnDamageDelegate.Broadcast(DamageTaken);
+	return DamageTaken;
+}
+
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
@@ -120,7 +128,7 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 
 void AAuraCharacterBase::AddCharacterAbilities() const
 {
-	if (!HasAuthority())
+	if(!HasAuthority())
 	{
 		return;
 	}
@@ -131,20 +139,20 @@ void AAuraCharacterBase::AddCharacterAbilities() const
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	auto &GameplayTags = FAuraGameplayTags::Get();
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Weapon) && IsValid(Weapon))
+	auto& GameplayTags = FAuraGameplayTags::Get();
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Weapon) && IsValid(Weapon))
 	{
 		return Weapon->GetSocketLocation(WeaponTipSocketName);
 	}
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_LeftHand))
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_LeftHand))
 	{
 		return GetMesh()->GetSocketLocation(LeftHandSocketName);
 	}
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
 	{
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
 	}
-	if (MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Tail))
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Tail))
 	{
 		return GetMesh()->GetSocketLocation(TailSocketName);
 	}
@@ -173,9 +181,9 @@ UNiagaraSystem* AAuraCharacterBase::GetBloodEffect_Implementation()
 
 FTaggedMontage AAuraCharacterBase::GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag)
 {
-	for (const auto& TaggedMontage : AttackMontages)
+	for(const auto& TaggedMontage : AttackMontages)
 	{
-		if (TaggedMontage.MontageTag.MatchesTagExact(MontageTag))
+		if(TaggedMontage.MontageTag.MatchesTagExact(MontageTag))
 		{
 			return TaggedMontage;
 		}
@@ -201,6 +209,11 @@ ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation()
 FOnASCRegistered& AAuraCharacterBase::GetOnASCRegisteredDelegate()
 {
 	return OnASCRegisteredDelegate;
+}
+
+FOnDamageSignature& AAuraCharacterBase::GetOnDamageDelegate()
+{
+	return OnDamageDelegate;
 }
 
 USkeletalMeshComponent* AAuraCharacterBase::GetWeapon_Implementation()
@@ -239,13 +252,13 @@ FOnDeathSignature& AAuraCharacterBase::GetOnDeathDelegate()
 
 void AAuraCharacterBase::Dissolve()
 {
-	if (IsValid(DissolveMaterialInstance))
+	if(IsValid(DissolveMaterialInstance))
 	{
 		const auto DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
 		GetMesh()->SetMaterial(0, DynamicMatInst);
 		StartDissolveTimeline(DynamicMatInst);
 	}
-		if (IsValid(WeaponDissolveMaterialInstance))
+	if(IsValid(WeaponDissolveMaterialInstance))
 	{
 		const auto DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
 		Weapon->SetMaterial(0, DynamicMatInst);
@@ -265,13 +278,13 @@ void AAuraCharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& G
 
 void AAuraCharacterBase::Spawning()
 {
-	if (IsValid(DissolveMaterialInstance))
+	if(IsValid(DissolveMaterialInstance))
 	{
 		const auto DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
 		GetMesh()->SetMaterial(0, DynamicMatInst);
 		StartSpawningTimeline(DynamicMatInst);
 	}
-	if (IsValid(WeaponDissolveMaterialInstance))
+	if(IsValid(WeaponDissolveMaterialInstance))
 	{
 		const auto DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
 		Weapon->SetMaterial(0, DynamicMatInst);

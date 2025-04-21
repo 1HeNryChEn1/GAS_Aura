@@ -25,21 +25,22 @@ class AURA_API AAuraProjectile : public AActor
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> ImpactSound;
 
+	UPROPERTY(EditDefaultsOnly)
+	float LifeSpan = 15.f;
+
+protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> LoopingSound;
 
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;
 
-	UPROPERTY(EditDefaultsOnly)
-	float LifeSpan = 15.f;
-
 	bool bHit = false;
 
-protected:
 	virtual void BeginPlay() override;
 
-	void OnHit();
+	UFUNCTION(BlueprintCallable)
+	virtual void OnHit();
 
 	bool IsValidOverlap(AActor* OtherActor);
 

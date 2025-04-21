@@ -107,7 +107,7 @@ int32 UArcaneShards::GetPointsByAbilityLevel() const
 	case 5:
 		return 9;
 	default:
-		return 11;
+		break;
 	}
-	return 0;
+	return 11;
 }

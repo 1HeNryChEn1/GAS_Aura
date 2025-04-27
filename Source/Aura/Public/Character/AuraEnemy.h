@@ -22,7 +22,7 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface, p
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
-	int32 PlayerLevel = 1;
+	int32 EnemyLevel = 1;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;
@@ -55,6 +55,9 @@ protected:
 	virtual void InitializeDefaultAttributes() const override;
 
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SpawnLoot();
 public:
 	AAuraEnemy();
 
@@ -78,6 +81,7 @@ public:
 
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
-
 	virtual void PossessedBy(AController* NewController) override;
+
+	void SetLevel(int32 InLevel) {EnemyLevel = InLevel;}
 };

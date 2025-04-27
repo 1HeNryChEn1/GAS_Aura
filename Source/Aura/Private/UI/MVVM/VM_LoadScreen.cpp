@@ -3,6 +3,7 @@
 
 #include "UI/MVVM/VM_LoadScreen.h"
 
+#include "Engine/Engine.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/AuraGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -39,23 +40,22 @@ void UVM_LoadScreen::NewSlotButtonPressed(int32 Slot, const FString& EnteredName
 		GEngine->AddOnScreenDebugMessage(1, 15.f, FColor::Magenta, FString("Please switch to Single Player"));
 		return;
 	}
-	
+
 	LoadSlots[Slot]->SetMapName(AuraGameMode->DefaultMapName);
 	LoadSlots[Slot]->SetPlayerName(EnteredName);
 	LoadSlots[Slot]->SetPlayerLevel(1);
 	LoadSlots[Slot]->SlotStatus = Taken;
 	LoadSlots[Slot]->PlayerStartTag = AuraGameMode->DefaultPlayerStartTag;
 	LoadSlots[Slot]->MapAssetName = AuraGameMode->DefaultMap.ToSoftObjectPath().GetAssetName();
-	
 
 	AuraGameMode->SaveSlotData(LoadSlots[Slot], Slot);
 	LoadSlots[Slot]->InitializeSlot();
-	
+
 	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance());
 	AuraGameInstance->LoadSlotName = LoadSlots[Slot]->GetLoadSlotName();
 	AuraGameInstance->LoadSlotIndex = LoadSlots[Slot]->SlotIndex;
 	AuraGameInstance->PlayerStartTag = AuraGameMode->DefaultPlayerStartTag;
-	
+
 }
 
 void UVM_LoadScreen::NewGameButtonPressed(int32 Slot)
@@ -66,9 +66,9 @@ void UVM_LoadScreen::NewGameButtonPressed(int32 Slot)
 void UVM_LoadScreen::SelectSlotButtonPressed(int32 Slot)
 {
 	SlotSelected.Broadcast();
-	for (const auto [SlotIndex, LoadSlotVM]: LoadSlots)
+	for(const auto [SlotIndex, LoadSlotVM] : LoadSlots)
 	{
-		if (SlotIndex == Slot)
+		if(SlotIndex == Slot)
 		{
 			LoadSlotVM->EnableSelectSlotButtonDelegate.Broadcast(false);
 		}
@@ -82,7 +82,7 @@ void UVM_LoadScreen::SelectSlotButtonPressed(int32 Slot)
 
 void UVM_LoadScreen::DeleteButtonPressed()
 {
-	if (IsValid(SelectedSlot))
+	if(IsValid(SelectedSlot))
 	{
 		AAuraGameModeBase::DeleteSlot(SelectedSlot->GetLoadSlotName(), SelectedSlot->SlotIndex);
 		SelectedSlot->SlotStatus = Vacant;
@@ -100,7 +100,7 @@ void UVM_LoadScreen::PlayButtonPressed()
 	AuraGameInstance->LoadSlotName = SelectedSlot->GetLoadSlotName();
 	AuraGameInstance->LoadSlotIndex = SelectedSlot->SlotIndex;
 
-	if (IsValid(SelectedSlot))
+	if(IsValid(SelectedSlot))
 	{
 		AuraGameMode->TravelToMap(SelectedSlot);
 	}
@@ -109,8 +109,8 @@ void UVM_LoadScreen::PlayButtonPressed()
 void UVM_LoadScreen::LoadData()
 {
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (!IsValid(AuraGameMode)) return;
-	for (const auto [SlotIndex, LoadSlotVM] : LoadSlots)
+	if(!IsValid(AuraGameMode)) return;
+	for(const auto [SlotIndex, LoadSlotVM] : LoadSlots)
 	{
 		ULoadScreenSaveGame* SaveObject = AuraGameMode->GetSaveSlotData(LoadSlotVM->GetLoadSlotName(), SlotIndex);
 

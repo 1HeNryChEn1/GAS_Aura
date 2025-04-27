@@ -19,7 +19,7 @@ class AURA_API AAuraCharacter : public AAuraCharacterBase, public IPlayerInterfa
 	TObjectPtr<USpringArmComponent> SpringArm;
 
 	UPROPERTY(EditAnywhere, Category = "Camera")
-	TObjectPtr<UCameraComponent> Camera;
+	TObjectPtr<UCameraComponent> TopDownCamera;
 
 	virtual void InitAbilityActorInfo() override;
 
@@ -29,10 +29,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	float DeathTime = 5.f;
+
+	FTimerHandle DeathTimer;
+
 	AAuraCharacter();
 
 	// Begin Combat Interface 
 	virtual int32 GetPlayerLevel_Implementation() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	// End Combat Interface
 
 	// Begin Player Interface

@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "NiagaraComponent.h"
+#include "TimerManager.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
@@ -41,9 +42,9 @@ AAuraCharacter::AAuraCharacter()
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->TargetArmLength = 800.0f;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
-	Camera->SetupAttachment(SpringArm);
-	Camera->bUsePawnControlRotation = false;
+	TopDownCamera = CreateDefaultSubobject<UCameraComponent>("Camera");
+	TopDownCamera->SetupAttachment(SpringArm);
+	TopDownCamera->bUsePawnControlRotation = false;
 
 	CharacterClass = ECharacterClass::Elementalist;
 }
@@ -53,6 +54,23 @@ int32 AAuraCharacter::GetPlayerLevel_Implementation()
 	const auto AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	return AuraPlayerState->GetPlayerLevel();
+}
+
+void AAuraCharacter::Die(const FVector& DeathImpulse)
+{
+	Super::Die(DeathImpulse);
+
+	FTimerDelegate DeathTimerDelegate;
+	DeathTimerDelegate.BindLambda([this]()
+	{
+		AAuraGameModeBase* AuraGM = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+		if (AuraGM)
+		{
+			AuraGM->PlayerDied(this);
+		}
+	});
+	GetWorldTimerManager().SetTimer(DeathTimer, DeathTimerDelegate, DeathTime, false);
+	TopDownCamera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 }
 
 void AAuraCharacter::AddToXP_Implementation(int32 InXP)
@@ -286,7 +304,7 @@ void AAuraCharacter::MulticastLevelUpParticles_Implementation()
 {
 	if(IsValid(LevelUpNiagaraComponent))
 	{
-		const FVector CameraLocation = Camera->GetComponentLocation();
+		const FVector CameraLocation = TopDownCamera->GetComponentLocation();
 		const FVector NiagaraLocation = LevelUpNiagaraComponent->GetComponentLocation();
 		const FRotator ToCameraRotation = (CameraLocation - NiagaraLocation).Rotation();
 		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);

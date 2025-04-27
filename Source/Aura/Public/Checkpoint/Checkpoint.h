@@ -61,6 +61,4 @@ public:
 
 	virtual void LoadActor_Implementation() override;
 	// End SaveInterface 
-
-
 };

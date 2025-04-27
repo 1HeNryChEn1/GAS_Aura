@@ -67,9 +67,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
 
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UAbilityInfo> AbilityInfo;
-
 	AAuraPlayerState();
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;

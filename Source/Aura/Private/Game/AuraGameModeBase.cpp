@@ -6,10 +6,12 @@
 #include "EngineUtils.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/PlayerStart.h"
 #include "GameFramework/SaveGame.h"
 #include "Interaction/SaveInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "Serialization/MemoryReader.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "UI/MVVM/VM_LoadSlot.h"
 
@@ -109,7 +111,7 @@ void AAuraGameModeBase::SaveWorldState(UWorld* World, const FString& Destination
 		if(DestinationMapAssetName != "")
 		{
 			SaveGame->MapAssetName = DestinationMapAssetName;
-			//SaveGame->MapName = GetMapNameFromMapAssetName(DestinationMapAssetName);
+			SaveGame->MapName = GetMapNameFromMapAssetName(DestinationMapAssetName);
 		}
 
 		if(!SaveGame->HasMap(WorldName))
@@ -204,4 +206,27 @@ void AAuraGameModeBase::LoadWorldState(UWorld* World) const
 			}
 		}
 	}
+}
+
+void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter)
+{
+	ULoadScreenSaveGame* SaveGame = RetrieveInGameSaveData();
+	if(!IsValid(SaveGame))
+	{
+		return;
+	}
+
+	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGame->MapAssetName));
+}
+
+FString AAuraGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetName) const
+{
+	for(auto& [MapName, WorldPtr] : Maps)
+	{
+		if(WorldPtr.ToSoftObjectPath().GetAssetName() == MapAssetName)
+		{
+			return MapName;
+		}
+	}
+	return {};
 }

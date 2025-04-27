@@ -85,6 +85,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UMaterialInterface> WeaponDissolveMaterialInstance;
 
+	UPROPERTY(BlueprintReadOnly)
 	bool bDead = false;
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
@@ -209,4 +210,6 @@ public:
 
 	UFUNCTION()
 	virtual void OnRep_Burned();
+
+	void SetCharacterClass(ECharacterClass InClass) { CharacterClass = InClass; }
 };

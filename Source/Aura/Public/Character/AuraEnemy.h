@@ -9,13 +9,14 @@
 #include "Character/AuraCharacterBase.h"
 #include "Components/WidgetComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "Interaction/HighlightInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 /**
  *
  */
 UCLASS()
-class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
+class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface, public IHighlightInterface
 {
 	GENERATED_BODY()
 
@@ -57,11 +58,13 @@ protected:
 public:
 	AAuraEnemy();
 
-	//~ Begin Enemy Interface 
-	virtual void HighlightActor() override;
+	//~ Begin HighLight Interface 
+	virtual void HighlightActor_Implementation() override;
 
-	virtual void UnHighlightActor() override;
-	//~ End Enemy Interface 
+	virtual void UnHighlightActor_Implementation() override;
+
+	virtual void SetMoveToLocation_Implementation(FVector& OutDestination) override;
+	//~ End HighLight Interface 
 
 	//~ Begin Combat Interface
 	virtual int32 GetPlayerLevel_Implementation() override;

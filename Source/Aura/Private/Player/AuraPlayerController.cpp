@@ -3,6 +3,7 @@
 
 #include "Player/AuraPlayerController.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
 #include "NavigationPath.h"
@@ -13,9 +14,11 @@
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
 #include "Engine/LocalPlayer.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Pawn.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
+#include "Interaction/HighlightInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -24,7 +27,6 @@ AAuraPlayerController::AAuraPlayerController()
 	FollowTime = 0.f;
 	ShortPressThreshold = 0.5f;
 	bAutoRunning = false;
-	bTargeting = false;
 	AutoRunAcceptanceRadius = 10.f;
 }
 
@@ -114,14 +116,8 @@ void AAuraPlayerController::CursorTrace()
 {
 	if(GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
 	{
-		if(LastActor)
-		{
-			LastActor->UnHighlightActor();
-		}
-		if(ThisActor)
-		{
-			ThisActor->UnHighlightActor();
-		}
+		UnHighlightActor(LastActor);
+		UnHighlightActor(ThisActor);
 		LastActor = nullptr;
 		ThisActor = nullptr;
 		return;
@@ -134,7 +130,14 @@ void AAuraPlayerController::CursorTrace()
 	}
 
 	LastActor = ThisActor;
-	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+	if(IsValid(CursorHit.GetActor()) && CursorHit.GetActor()->Implements<UHighlightInterface>())
+	{
+		ThisActor = CursorHit.GetActor();
+	}
+	else
+	{
+		ThisActor = nullptr;
+	}
 	/**
 	 * A. Last is null && This is null : do nothing
 	 * B. Last is null && This is valid : highlight This
@@ -145,14 +148,8 @@ void AAuraPlayerController::CursorTrace()
 	 */
 	if(LastActor != ThisActor)
 	{
-		if(LastActor)
-		{
-			LastActor->UnHighlightActor();
-		}
-		if(ThisActor)
-		{
-			ThisActor->HighlightActor();
-		}
+		UnHighlightActor(LastActor);
+		HighlightActor(ThisActor);
 	}
 }
 
@@ -164,7 +161,14 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	}
 	if(InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		bTargeting = ThisActor ? true : false;
+		if(IsValid(ThisActor))
+		{
+			TargetingStatus = ThisActor->Implements<UEnemyInterface>() ? ETargetingStatus::TargetingEnemy : ETargetingStatus::TargetingNonEnemy;
+		}
+		else
+		{
+			TargetingStatus = ETargetingStatus::NotTargeting;
+		}
 		bAutoRunning = false;
 	}
 	if(GetASC())
@@ -191,10 +195,19 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	{
 		GetASC()->AbilityInputTagReleased(InputTag);
 	}
-	if(!bTargeting && !bShiftKeyDown)
+	if(TargetingStatus != ETargetingStatus::TargetingEnemy && !bShiftKeyDown)
 	{
-		if(const APawn* ControllerPawn = GetPawn(); FollowTime <= ShortPressThreshold && ControllerPawn)
+		const APawn* ControllerPawn = GetPawn();
+		if(FollowTime <= ShortPressThreshold && ControllerPawn)
 		{
+			if(IsValid(ThisActor) && ThisActor->Implements<UHighlightInterface>())
+			{
+				IHighlightInterface::Execute_SetMoveToLocation(ThisActor, CachedDestination);
+			}
+			else if(GetASC() && !GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+			{
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+			}
 			if(const auto NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControllerPawn->GetActorLocation(), CachedDestination))
 			{
 				Spline->ClearSplinePoints();
@@ -214,7 +227,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 			}
 		}
 		FollowTime = 0.f;
-		bTargeting = false;
+		TargetingStatus = ETargetingStatus::NotTargeting;
 	}
 }
 
@@ -233,7 +246,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		return;
 	}
 
-	if(bTargeting || bShiftKeyDown)
+	if(TargetingStatus == ETargetingStatus::TargetingEnemy || bShiftKeyDown)
 	{
 		if(GetASC())
 		{
@@ -309,5 +322,21 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 		bAutoRunning = false;
+	}
+}
+
+void AAuraPlayerController::HighlightActor(AActor* InActor)
+{
+	if(IsValid(InActor) && InActor->Implements<UHighlightInterface>())
+	{
+		IHighlightInterface::Execute_HighlightActor(InActor);
+	}
+}
+
+void AAuraPlayerController::UnHighlightActor(AActor* InActor)
+{
+	if(IsValid(InActor) && InActor->Implements<UHighlightInterface>())
+	{
+		IHighlightInterface::Execute_UnHighlightActor(InActor);
 	}
 }

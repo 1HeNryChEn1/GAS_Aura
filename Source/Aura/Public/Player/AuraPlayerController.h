@@ -3,23 +3,30 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "UI/Widgets/DamageTextComponent.h"
-#include "GameFramework/Character.h"
 #include "AuraPlayerController.generated.h"
 
+class IHighlightInterface;
 class AMagicCircle;
 class UNiagaraSystem;
 class USplineComponent;
 class UAuraAbilitySystemComponent;
 class UAuraInputConfig;
-class IEnemyInterface;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+
+
+enum class ETargetingStatus : uint8
+{
+	TargetingEnemy,
+	TargetingNonEnemy,
+	NotTargeting
+};
+
 
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
@@ -35,9 +42,13 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "GAS|Input")
 	TObjectPtr<UInputAction> ShiftAction;
+	
+	UPROPERTY()
+	TObjectPtr<AActor> LastActor;
 
-	IEnemyInterface* LastActor;
-	IEnemyInterface* ThisActor;
+	UPROPERTY()
+	TObjectPtr<AActor> ThisActor;
+
 	FHitResult CursorHit;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|Input")
@@ -51,7 +62,7 @@ private:
 	float FollowTime;
 	float ShortPressThreshold;
 	bool bAutoRunning;
-	bool bTargeting;
+	ETargetingStatus TargetingStatus = ETargetingStatus::NotTargeting;
 	bool bShiftKeyDown = false;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -59,6 +70,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
+
 	/** End Click to move **/
 
 	UPROPERTY(EditDefaultsOnly)
@@ -96,6 +108,9 @@ private:
 	UAuraAbilitySystemComponent* GetASC();
 
 	void UpdateMagicCircleLocation();
+
+	static void HighlightActor(AActor* InActor);
+	static void UnHighlightActor(AActor* InActor);
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;

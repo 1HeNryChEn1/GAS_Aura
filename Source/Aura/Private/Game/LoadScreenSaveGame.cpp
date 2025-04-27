@@ -12,7 +12,7 @@ FSavedMap ULoadScreenSaveGame::GetSavedMapWithMapName(const FString& InMapName)
 			return Map;
 		}
 	}
-	return FSavedMap();
+	return {};
 }
 
 bool ULoadScreenSaveGame::HasMap(const FString& InMapName)

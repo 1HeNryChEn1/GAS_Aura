@@ -23,34 +23,34 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	GetAuraPlayerState()->OnSpellPointsChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnSpellPointsChanged);
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-    GetAuraAttributeSet()->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-	    OnHealthChanged.Broadcast(Data.NewValue);
-	});
+		GetAuraAttributeSet()->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+															   {
+																   OnHealthChanged.Broadcast(Data.NewValue);
+															   });
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-	    GetAuraAttributeSet()->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-	    OnMaxHealthChanged.Broadcast(Data.NewValue);
-	});
+		GetAuraAttributeSet()->GetMaxHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+																  {
+																	  OnMaxHealthChanged.Broadcast(Data.NewValue);
+																  });
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-	    GetAuraAttributeSet()->GetManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-	    OnManaChanged.Broadcast(Data.NewValue);
-	});
+		GetAuraAttributeSet()->GetManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+															 {
+																 OnManaChanged.Broadcast(Data.NewValue);
+															 });
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-	    GetAuraAttributeSet()->GetMaxManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
-	{
-	    OnMaxManaChanged.Broadcast(Data.NewValue);
-	});
+		GetAuraAttributeSet()->GetMaxManaAttribute()).AddLambda([this](const FOnAttributeChangeData& Data)
+																{
+																	OnMaxManaChanged.Broadcast(Data.NewValue);
+																});
 
-	if (GetAuraAbilitySystemComponent())
+	if(GetAuraAbilitySystemComponent())
 	{
 		GetAuraAbilitySystemComponent()->AbilityEquipped.AddUObject(this, &UOverlayWidgetController::OnAbilityEquipped);
 
-		if (GetAuraAbilitySystemComponent()->bStartupAbilitiesGiven)  // When callback binding is slower than the initialization of Abilities.
+		if(GetAuraAbilitySystemComponent()->bStartupAbilitiesGiven)  // When callback binding is slower than the initialization of Abilities.
 		{
 			BroadcastInitialValues();
 		}
@@ -58,19 +58,19 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		{
 			GetAuraAbilitySystemComponent()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
 		}
-		
+
 	}
 
 	GetAuraAbilitySystemComponent()->EffectAssetTags.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)
 		{
-			for (const auto &Tag : AssetTags)
+			for(const auto& Tag : AssetTags)
 			{
 				FGameplayTag MessageTag = FGameplayTag::RequestGameplayTag(FName("Message"));
-				if (Tag.MatchesTag(MessageTag))
+				if(Tag.MatchesTag(MessageTag))
 				{
 					const FUIWidgetRow* Row = GetDateTableRowByTag<FUIWidgetRow>(MessageWidgetDataTable, Tag);  // could be nullptr
-					if (Row)
+					if(Row)
 					{
 						MessageWidgetRow.Broadcast(*Row);
 					}
@@ -88,7 +88,7 @@ void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 
 	const int32 CurrentLevel = LevelUpInfo->FindLevelByXP(NewXP);
 	const int32 MaxLevel = LevelUpInfo->LevelUpInfos.Num() - 1;
-	if (0 < CurrentLevel && CurrentLevel <= MaxLevel)
+	if(0 < CurrentLevel && CurrentLevel <= MaxLevel)
 	{
 		const int32 LevelUpRequirement = LevelUpInfo->LevelUpInfos[CurrentLevel].LevelUpRequirement;
 		const int32 PreviousLevelUpRequirement = LevelUpInfo->LevelUpInfos[CurrentLevel - 1].LevelUpRequirement;
@@ -96,12 +96,12 @@ void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 		const int32 XPForThisLevel = NewXP - PreviousLevelUpRequirement;
 		const float NewXPPercent = static_cast<float>(XPForThisLevel) / static_cast<float>(DeltaLevelRequirement);
 		OnXPPercentChangedDelegate.Broadcast(NewXPPercent);
-	}	
+	}
 }
 
-void UOverlayWidgetController::OnPlayerLevelChanged(int32 NewPlayerLevel) const
+void UOverlayWidgetController::OnPlayerLevelChanged(int32 NewPlayerLevel, bool bLevelUp) const
 {
-	OnPlayerLevelChangedDelegate.Broadcast(NewPlayerLevel);
+	OnPlayerLevelChangedDelegate.Broadcast(NewPlayerLevel, bLevelUp);
 }
 
 void UOverlayWidgetController::OnAttributePointsChanged(int32 NewAttributePoints) const
@@ -114,7 +114,7 @@ void UOverlayWidgetController::OnSpellPointsChanged(int32 NewSpellPoints) const
 	OnSpellPointsChangedDelegate.Broadcast(NewSpellPoints);
 }
 
-void UOverlayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot) const 
+void UOverlayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot) const
 {
 	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 

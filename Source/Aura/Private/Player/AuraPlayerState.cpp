@@ -9,7 +9,7 @@
 
 void AAuraPlayerState::OnRep_PlayerLevel(int32 OldPlayerLevel)
 {
-	OnLevelChangedDelegate.Broadcast(PlayerLevel);
+	OnLevelChangedDelegate.Broadcast(PlayerLevel, true);
 }
 
 void AAuraPlayerState::OnRep_XP(int32 OldXP)
@@ -73,7 +73,7 @@ void AAuraPlayerState::SetXP(int32 InXP)
 void AAuraPlayerState::AddToLevel(int32 InLevel)
 {
 	PlayerLevel += InLevel;
-	OnLevelChangedDelegate.Broadcast(PlayerLevel);
+	OnLevelChangedDelegate.Broadcast(PlayerLevel, true);
 }
 
 void AAuraPlayerState::AddToAttributePoints(int32 InAttributePoints)
@@ -85,7 +85,7 @@ void AAuraPlayerState::AddToAttributePoints(int32 InAttributePoints)
 void AAuraPlayerState::SetLevel(int32 InLevel)
 {
 	PlayerLevel = InLevel;
-	OnLevelChangedDelegate.Broadcast(PlayerLevel);
+	OnLevelChangedDelegate.Broadcast(PlayerLevel, false);
 }
 
 void AAuraPlayerState::SetAttributePoints(int32 InAttributePoints)

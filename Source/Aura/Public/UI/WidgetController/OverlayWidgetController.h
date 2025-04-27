@@ -34,6 +34,7 @@ struct FUIWidgetRow : public FTableRowBase
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLevelChangedSignature, int32, NewLevel, bool, bLevelUp);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
 UCLASS(BlueprintType, Blueprintable)
@@ -50,7 +51,7 @@ protected:
 
 	void OnXPChanged(int32 NewXP);
 
-	void OnPlayerLevelChanged(int32 NewPlayerLevel) const;
+	void OnPlayerLevelChanged(int32 NewPlayerLevel, bool bLevelUp) const;
 
 	void OnAttributePointsChanged(int32 NewAttributePoints) const;
 
@@ -81,7 +82,7 @@ public:
 	FOnPlayerStatChangedSignature OnXPPercentChangedDelegate;
 
 	UPROPERTY (BlueprintAssignable, category = "GAS|PlayerLevel")
-	FOnPlayerStatChangedSignature OnPlayerLevelChangedDelegate;
+	FOnLevelChangedSignature OnPlayerLevelChangedDelegate;
 
 	UPROPERTY (BlueprintAssignable, category = "GAS|AttributePoints")
 	FOnPlayerStatChangedSignature OnAttributePointsChangedDelegate;

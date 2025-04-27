@@ -33,6 +33,11 @@ struct FSavedActor
 	TArray<uint8> Bytes;
 };
 
+inline bool operator==(const FSavedActor& Left, const FSavedActor& Right)
+{
+	return Left.ActorName == Right.ActorName;
+}
+
 USTRUCT(BlueprintType)
 struct FSavedAbility
 {
@@ -42,16 +47,16 @@ struct FSavedAbility
 	TSubclassOf<UGameplayAbility> GameplayAbility;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FGameplayTag AbilityTag = FGameplayTag();
+	FGameplayTag AbilityTag{};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FGameplayTag AbilityStatus = FGameplayTag();
+	FGameplayTag AbilityStatus{};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FGameplayTag AbilitySlot = FGameplayTag();
+	FGameplayTag AbilitySlot{};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FGameplayTag AbilityType = FGameplayTag();
+	FGameplayTag AbilityType{};
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	int32 AbilityLevel = 1;
@@ -68,7 +73,7 @@ struct FSavedMap
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FString MapAssetName = FString();
+	FString MapAssetName{};
 
 	UPROPERTY()
 	TArray<FSavedActor> SavedActors;
@@ -81,19 +86,19 @@ class AURA_API ULoadScreenSaveGame : public USaveGame
 
 public:
 	UPROPERTY()
-	FString SlotName = FString();
+	FString SlotName{};
 
 	UPROPERTY()
 	int32 SlotIndex = 0;
 
 	UPROPERTY()
-	FString PlayerName = FString("Default Name");
+	FString PlayerName = "Default Name";
 
 	UPROPERTY()
-	FString MapName = FString("Default Map Name");
+	FString MapName = "Default Map Name";
 
 	UPROPERTY()
-	FString MapAssetName = FString("Default Map Asset Name");
+	FString MapAssetName = "Default Map Asset Name";
 
 	UPROPERTY()
 	FName PlayerStartTag;

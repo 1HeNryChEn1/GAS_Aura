@@ -18,6 +18,7 @@ class AURA_API AAuraGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -52,5 +53,16 @@ public:
 
 	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
 
+	ULoadScreenSaveGame* RetrieveInGameSaveData();
+
+	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject);
+
 	void TravelToMap(UVM_LoadSlot* Slot);
+
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+	// Save Game  (Can also be implemented with SubSystem)
+	void SaveWorldState(UWorld* World, const FString& DestinationMapAssetName = FString("")) const;
+
+	void LoadWorldState(UWorld* World) const;
 };

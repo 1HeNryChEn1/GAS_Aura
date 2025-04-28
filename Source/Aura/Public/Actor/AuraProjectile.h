@@ -6,13 +6,14 @@
 #include "AuraAbilityTypes.h"
 #include "NiagaraSystem.h"
 #include "GameFramework/Actor.h"
+#include "Interaction/PoolableInterface.h"
 #include "AuraProjectile.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;
 
 UCLASS()
-class AURA_API AAuraProjectile : public AActor
+class AURA_API AAuraProjectile : public AActor, public IPoolableInterface
 {
 	GENERATED_BODY()
 
@@ -24,9 +25,6 @@ class AURA_API AAuraProjectile : public AActor
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> ImpactSound;
-
-	UPROPERTY(EditDefaultsOnly)
-	float LifeSpan = 15.f;
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -61,4 +59,10 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<USceneComponent> HomingTargetSceneComponent;
+
+	// PoolableInterface
+	virtual void Activate_Implementation(const FTransform& SpawnTransform, AActor* InOwner, APawn* InInstigator) override;
+	virtual void Deactivate_Implementation() override;
+	virtual void Reset_Implementation() override;
+	// End PoolableInterface
 };

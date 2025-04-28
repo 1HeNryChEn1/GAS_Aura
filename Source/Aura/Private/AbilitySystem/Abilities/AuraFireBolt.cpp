@@ -6,6 +6,7 @@
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Actor/AuraProjectile.h"
+#include "Game/ObjectPoolSubsystem.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -103,9 +104,9 @@ FString UAuraFireBolt::GetNextLevelDescription(int32 Level)
 }
 
 void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag,
-									bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
+									 bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
 {
-	if (!GetAvatarActorFromActorInfo()->HasAuthority())
+	if(!GetAvatarActorFromActorInfo()->HasAuthority())
 	{
 		return;
 	}
@@ -121,23 +122,33 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 	const FVector Forward = Rotation.Vector();
 	const int32 EffectiveNumProjectiles = FMath::Min(NumProjectiles, GetAbilityLevel());
 	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, EffectiveNumProjectiles);
+
+	// Get object pool subsystem
+	UObjectPoolSubsystem* PoolSubsystem = GetAvatarActorFromActorInfo()->GetWorld()->GetGameInstance()->GetSubsystem<UObjectPoolSubsystem>();
+
 	for(const FRotator& Rot : Rotations)
 	{
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
 		SpawnTransform.SetRotation(Rot.Quaternion());
+
+
+		/*
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 			ProjectileClass,
 			SpawnTransform,
 			GetOwningActorFromActorInfo(),
 			Cast<APawn>(GetOwningActorFromActorInfo()),
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-		
+			*/
+		AAuraProjectile* Projectile = Cast<AAuraProjectile>(PoolSubsystem->GetPooledObject(ProjectileClass));
+
+
 		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
-		if (bLaunchHomingAcceleration)
+		if(bLaunchHomingAcceleration)
 		{
-			if (HomingTarget && HomingTarget->Implements<UCombatInterface>())
+			if(HomingTarget && HomingTarget->Implements<UCombatInterface>())
 			{
 				Projectile->ProjectileMovement->HomingTargetComponent = HomingTarget->GetRootComponent();
 			}
@@ -150,6 +161,7 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 			Projectile->ProjectileMovement->HomingAccelerationMagnitude = FMath::RandRange(HomingAccelerationMin, HomingAccelerationMax);
 			Projectile->ProjectileMovement->bIsHomingProjectile = bLaunchHomingAcceleration;
 		}
-		Projectile->FinishSpawning(SpawnTransform);
+		// Projectile->FinishSpawning(SpawnTransform);
+		IPoolableInterface::Execute_Activate(Projectile, SpawnTransform, GetOwningActorFromActorInfo(), Cast<APawn>(GetOwningActorFromActorInfo()));
 	}
 }

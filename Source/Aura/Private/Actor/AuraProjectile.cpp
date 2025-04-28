@@ -10,6 +10,7 @@
 #include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
+#include "Game/ObjectPoolSubsystem.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -20,11 +21,6 @@ AAuraProjectile::AAuraProjectile()
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	SetRootComponent(Sphere);
-	Sphere->SetCollisionObjectType(ECC_Projectile);
-	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
-	Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
-	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
 	ProjectileMovement->InitialSpeed = 500.f;
@@ -32,20 +28,72 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 }
 
+void AAuraProjectile::Activate_Implementation(const FTransform& SpawnTransform, AActor* InOwner, APawn* InInstigator)
+{
+	SetActorTransform(SpawnTransform);
+	SetOwner(InOwner);
+	SetInstigator(InInstigator);
+
+	// Enable rendering, collision, and tick
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	Sphere->SetCollisionObjectType(ECC_Projectile);
+	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
+	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	SetActorTickEnabled(true); 
+	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+}
+
+void AAuraProjectile::Deactivate_Implementation()
+{
+	// Disable rendering, collision, and tick
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
+
+	// Reset position and movement
+	SetActorLocation(FVector::ZeroVector);
+	if(ProjectileMovement)
+	{
+		ProjectileMovement->Velocity = FVector::ZeroVector;
+		ProjectileMovement->HomingTargetComponent = nullptr;
+	}
+
+	if(LoopingSoundComponent)
+	{
+		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
+	}
+	if(!bHit && !HasAuthority()) //server size had got hit, so client must play
+	{
+		OnHit();
+	}
+}
+
+void AAuraProjectile::Reset_Implementation()
+{
+	if(HomingTargetSceneComponent)
+	{
+		HomingTargetSceneComponent->SetWorldLocation(FVector::ZeroVector);
+	}
+	ProjectileMovement->HomingAccelerationMagnitude = 0.f;
+	ProjectileMovement->bIsHomingProjectile = false;
+}
+
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnSphereOverlap);
-	SetLifeSpan(LifeSpan);
 	SetReplicateMovement(true);
-	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
 }
 
 void AAuraProjectile::OnHit()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	if (LoopingSoundComponent)
+	if(LoopingSoundComponent)
 	{
 		LoopingSoundComponent->Stop();
 		LoopingSoundComponent->DestroyComponent();
@@ -55,36 +103,40 @@ void AAuraProjectile::OnHit()
 
 void AAuraProjectile::Destroyed()
 {
-	if (LoopingSoundComponent)
+	if(LoopingSoundComponent)
 	{
 		LoopingSoundComponent->Stop();
 		LoopingSoundComponent->DestroyComponent();
 	}
-	if (!bHit && !HasAuthority()) //server size had got hit, so client must play
- 	{
+	if(!bHit && !HasAuthority()) //server size had got hit, so client must play
+	{
 		OnHit();
- 	}
+	}
 	Super::Destroyed();
 }
 
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                      UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+									  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!IsValidOverlap(OtherActor)) return;
-	if (!bHit)
+	if(!IsValidOverlap(OtherActor))
+	{
+		return;
+	}
+	if(!bHit)
 	{
 		OnHit();
 	}
-	if (HasAuthority())
+	if(HasAuthority())
 	{
-		if (auto TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		// Damage Effect
+		if(auto TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
 			// Impulse
 			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
 			DamageEffectParams.DeathImpulse = DeathImpulse;
 
 			// Knockback 
-			if (FMath::RandRange(0, 99) < DamageEffectParams.KnockbackChance)
+			if(FMath::RandRange(0, 99) < DamageEffectParams.KnockbackChance)
 			{
 				FRotator Rotation = GetActorRotation();
 				const FVector KnockbackDirection = Rotation.Vector();
@@ -94,7 +146,14 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
 			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
-		Destroy();
+
+		// Play Hit effect
+		Execute_Deactivate(this);
+		UObjectPoolSubsystem* PoolSubsystem = GetWorld()->GetGameInstance()->GetSubsystem<UObjectPoolSubsystem>();
+		if(PoolSubsystem)
+		{
+			PoolSubsystem->ReturnPooledObject(this);
+		}
 	}
 	else
 	{
@@ -104,10 +163,10 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 bool AAuraProjectile::IsValidOverlap(AActor* OtherActor)
 {
-	if (DamageEffectParams.SourceAbilitySystemComponent == nullptr) return false;
+	if(DamageEffectParams.SourceAbilitySystemComponent == nullptr) return false;
 	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
-	if (SourceAvatarActor == OtherActor) return false;
-	if (UAuraAbilitySystemLibrary::IsFriend(SourceAvatarActor, OtherActor)) return false;
+	if(SourceAvatarActor == OtherActor) return false;
+	if(UAuraAbilitySystemLibrary::IsFriend(SourceAvatarActor, OtherActor)) return false;
 
 	return true;
 }

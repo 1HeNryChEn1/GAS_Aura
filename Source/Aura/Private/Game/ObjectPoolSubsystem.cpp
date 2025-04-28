@@ -10,9 +10,11 @@ void UObjectPoolSubsystem::InitializePool(TSubclassOf<AActor> ObjectClass, int32
 	}
 
 	TArray<TObjectPtr<AActor>>& Pool = AvailableObjects.FindOrAdd(ObjectClass).Objects;
-	// Pre-allocate memory to avoid reallocations
+	TArray<TObjectPtr<AActor>>& AllPool = AllObjects.FindOrAdd(ObjectClass).Objects;
 
+	// Pre-allocate memory to avoid reallocations
 	Pool.Reserve(PoolSize);
+	AllPool.Reserve(PoolSize);
 
 	for(int32 i = 0; i < PoolSize; i++)
 	{
@@ -27,6 +29,7 @@ void UObjectPoolSubsystem::InitializePool(TSubclassOf<AActor> ObjectClass, int32
 		NewObject->SetActorEnableCollision(false);
 
 		Pool.Add(NewObject);
+		AllPool.Add(NewObject);
 	}
 }
 
@@ -38,7 +41,7 @@ AActor* UObjectPoolSubsystem::GetPooledObject(TSubclassOf<AActor> ObjectClass)
 	}
 
 	FPooledObjectArray* PoolPtr = AvailableObjects.Find(ObjectClass);
-	if(PoolPtr == nullptr)
+	if(PoolPtr != nullptr)
 	{
 		TArray<TObjectPtr<AActor>>& Pool = PoolPtr->Objects;
 		if(Pool.Num() > 0)
@@ -46,12 +49,23 @@ AActor* UObjectPoolSubsystem::GetPooledObject(TSubclassOf<AActor> ObjectClass)
 			AActor* Object = Pool.Pop(false); // Pop without Shrinking
 			Object->SetActorHiddenInGame(false);
 			Object->SetActorEnableCollision(true);
+			//show message in screen:
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Pooled Object Spawned"));
 			return Object;
 		}
 	}
 
-	// Dynamic expanding ?
 	AActor* NewObject = GetWorld()->SpawnActor<AActor>(ObjectClass, FVector::ZeroVector, FRotator::ZeroRotator);
+	if(!IsValid(NewObject))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to spawn new object of class %s"), *ObjectClass->GetName());
+		return nullptr;
+	}
+
+	NewObject->SetActorHiddenInGame(false);
+	NewObject->SetActorEnableCollision(true);
+
+	AllObjects.FindOrAdd(ObjectClass).Objects.Add(NewObject);
 	return NewObject;
 }
 
@@ -72,15 +86,13 @@ void UObjectPoolSubsystem::ReturnPooledObject(AActor* Object)
 void UObjectPoolSubsystem::Deinitialize()
 {
 	// Destroy all actors created by the pool
-    for (auto& [TypeOfClass, Pool] : AvailableObjects)
-    {
-        for (TObjectPtr<AActor> ActorPtr : Pool.Objects)
-        {
-            if (IsValid(ActorPtr))
-            {
-                ActorPtr->Destroy();
-            }
-        }
-    }
-    AvailableObjects.Empty();
+	for(auto& Entry : AllObjects) 
+	{
+		for(AActor* Obj : Entry.Value.Objects)
+		{
+			if(IsValid(Obj)) Obj->Destroy();
+		}
+	}
+	AllObjects.Empty();
+	AvailableObjects.Empty();
 }

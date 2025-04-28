@@ -9,10 +9,10 @@
 USTRUCT()
 struct AURA_API FPooledObjectArray
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
-    UPROPERTY()
-    TArray<TObjectPtr<AActor>> Objects;
+	UPROPERTY()
+	TArray<TObjectPtr<AActor>> Objects;
 };
 
 UCLASS()
@@ -20,23 +20,26 @@ class AURA_API UObjectPoolSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-    UPROPERTY()
-    TMap<TSubclassOf<AActor>, FPooledObjectArray> AvailableObjects;
+	UPROPERTY()
+	TMap<TSubclassOf<AActor>, FPooledObjectArray> AvailableObjects;
 
-    //  Number of actors to spawn when expanding dynamically
-    static constexpr int32 ExpansionSize = 5;
+	UPROPERTY()
+	TMap<TSubclassOf<AActor>, FPooledObjectArray> AllObjects;
+
+	//  Number of actors to spawn when expanding dynamically
+	static constexpr int32 ExpansionSize = 5;
 
 public:
-    UFUNCTION(BlueprintCallable, Category = "Object Pool")
-    void InitializePool(TSubclassOf<AActor> ObjectClass, int32 PoolSize);
+	UFUNCTION(BlueprintCallable, Category = "Object Pool")
+	void InitializePool(TSubclassOf<AActor> ObjectClass, int32 PoolSize);
 
-    UFUNCTION(BlueprintCallable, Category = "Object Pool")
-    AActor* GetPooledObject(TSubclassOf<AActor> ObjectClass);
+	UFUNCTION(BlueprintCallable, Category = "Object Pool")
+	AActor* GetPooledObject(TSubclassOf<AActor> ObjectClass);
 
-    UFUNCTION(BlueprintCallable, Category = "Object Pool")
-    void ReturnPooledObject(AActor* Object);
+	UFUNCTION(BlueprintCallable, Category = "Object Pool")
+	void ReturnPooledObject(AActor* Object);
 
-    /** Clean up and destroy all pooled actors */
-    virtual void Deinitialize() override;
+	/** Clean up and destroy all pooled actors */
+	virtual void Deinitialize() override;
 };
 

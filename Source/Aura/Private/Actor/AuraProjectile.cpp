@@ -34,31 +34,39 @@ void AAuraProjectile::Activate_Implementation(const FTransform& SpawnTransform, 
 	SetOwner(InOwner);
 	SetInstigator(InInstigator);
 
-	// Enable rendering, collision, and tick
-	SetActorHiddenInGame(false);
-	SetActorEnableCollision(true);
-	Sphere->SetCollisionObjectType(ECC_Projectile);
-	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
-	Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
-	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	SetActorTickEnabled(true); 
+
+	if(ProjectileMovement)
+	{
+		FVector Direction = SpawnTransform.GetRotation().Rotator().Vector();
+		ProjectileMovement->Velocity = Direction * ProjectileMovement->InitialSpeed;
+	}
+	bHit = false;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		CollisionTimerHandle,
+		this,
+		&AAuraProjectile::EnableCollision,
+		0.15f,
+		false
+	);
 	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+
+	SetActorHiddenInGame(false);
+	SetActorTickEnabled(true);
 }
 
 void AAuraProjectile::Deactivate_Implementation()
 {
 	// Disable rendering, collision, and tick
-	SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
 	SetActorTickEnabled(false);
+	SetActorEnableCollision(false);
+	SetActorHiddenInGame(true);
 
-	// Reset position and movement
-	SetActorLocation(FVector::ZeroVector);
 	if(ProjectileMovement)
 	{
 		ProjectileMovement->Velocity = FVector::ZeroVector;
 		ProjectileMovement->HomingTargetComponent = nullptr;
+		ProjectileMovement->StopMovementImmediately(); // Stop any movement
 	}
 
 	if(LoopingSoundComponent)
@@ -80,6 +88,17 @@ void AAuraProjectile::Reset_Implementation()
 	}
 	ProjectileMovement->HomingAccelerationMagnitude = 0.f;
 	ProjectileMovement->bIsHomingProjectile = false;
+}
+
+void AAuraProjectile::EnableCollision()
+{
+	Sphere->IgnoreActorWhenMoving(GetOwner(), true);
+	Sphere->SetCollisionObjectType(ECC_Projectile);
+	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Sphere->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	Sphere->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap);
+	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	SetActorEnableCollision(true);
 }
 
 void AAuraProjectile::BeginPlay()

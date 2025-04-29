@@ -47,6 +47,12 @@ AActor* UObjectPoolSubsystem::GetPooledObject(TSubclassOf<AActor> ObjectClass)
 		if(Pool.Num() > 0)
 		{
 			AActor* Object = Pool.Pop(false); // Pop without Shrinking
+			if(!Object)
+			{
+				Deinitialize();
+				InitializePool(ObjectClass, AllObjects.Num());
+				return GetPooledObject(ObjectClass);
+			}
 			Object->SetActorHiddenInGame(false);
 			Object->SetActorEnableCollision(true);
 			//show message in screen:
@@ -86,7 +92,7 @@ void UObjectPoolSubsystem::ReturnPooledObject(AActor* Object)
 void UObjectPoolSubsystem::Deinitialize()
 {
 	// Destroy all actors created by the pool
-	for(auto& Entry : AllObjects) 
+	for(auto& Entry : AllObjects)
 	{
 		for(AActor* Obj : Entry.Value.Objects)
 		{

@@ -6,6 +6,7 @@
 #include "EngineUtils.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
+#include "Game/ObjectPoolSubsystem.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/PlayerStart.h"
 #include "GameFramework/SaveGame.h"
@@ -14,6 +15,8 @@
 #include "Serialization/MemoryReader.h"
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "UI/MVVM/VM_LoadSlot.h"
+
+class UObjectPoolSubsystem;
 
 void AAuraGameModeBase::BeginPlay()
 {
@@ -72,6 +75,7 @@ void AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject)
 void AAuraGameModeBase::TravelToMap(UVM_LoadSlot* Slot)
 {
 	UGameplayStatics::OpenLevelBySoftObjectPtr(Slot, Maps.FindChecked(Slot->GetMapName()));
+	Cast<UAuraGameInstance>(GetGameInstance())->RefreshPool();
 }
 
 AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
@@ -217,6 +221,7 @@ void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter)
 	}
 
 	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGame->MapAssetName));
+	Cast<UAuraGameInstance>(GetGameInstance())->RefreshPool();
 }
 
 FString AAuraGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetName) const

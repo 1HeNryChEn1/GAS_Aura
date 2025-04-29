@@ -25,4 +25,6 @@ public:
 	int32 LoadSlotIndex = 0;
 
 	virtual void Init() override;
+
+	void RefreshPool();
 };

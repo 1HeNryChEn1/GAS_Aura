@@ -26,6 +26,8 @@ class AURA_API AAuraProjectile : public AActor, public IPoolableInterface
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> ImpactSound;
 
+	FTimerHandle CollisionTimerHandle;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> LoopingSound;
@@ -65,4 +67,6 @@ public:
 	virtual void Deactivate_Implementation() override;
 	virtual void Reset_Implementation() override;
 	// End PoolableInterface
+
+	void EnableCollision();
 };

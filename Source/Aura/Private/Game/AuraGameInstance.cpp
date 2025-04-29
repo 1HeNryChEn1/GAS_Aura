@@ -16,3 +16,13 @@ void UAuraGameInstance::Init()
         PoolSubsystem->InitializePool(AAuraProjectile::StaticClass(), 30);
     }
 }
+
+void UAuraGameInstance::RefreshPool()
+{
+    UObjectPoolSubsystem* PoolSubsystem = GetSubsystem<UObjectPoolSubsystem>();
+    if (PoolSubsystem)
+    {
+        PoolSubsystem->Deinitialize();
+        PoolSubsystem->InitializePool(AAuraProjectile::StaticClass(), 30);
+    }
+}
